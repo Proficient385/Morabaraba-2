@@ -6,11 +6,13 @@
         xmlns:local="clr-namespace:Morabaraba_2"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525" ResizeMode="CanMinimize" Background="#FF000964">
-    <Canvas x:Name="Background" Margin="107,18,81,16" >
+    <Canvas x:Name="Background" Margin="107,18,81,16" MouseDown="Background_MouseDown" >
         <Canvas.Background>
             <ImageBrush ImageSource="Board2.PNG" Stretch="Uniform"/>
         </Canvas.Background>
         <Ellipse x:Name="Piece1" Height="70" Canvas.Left="176" Stroke="Black" Canvas.Top="-13" Width="70" Fill="#FFF72424" RenderTransformOrigin="3.188,0.834"/>
         <Ellipse x:Name="Piece2" Height="70" Canvas.Left="27" Stroke="Black" Canvas.Top="-13" Width="70" Fill="#FFEEF724" RenderTransformOrigin="3.188,0.834"/>
+        <TextBox x:Name="t" Height="42" Canvas.Left="-84" TextWrapping="Wrap" Text="TextBox" Canvas.Top="216" Width="75"/>
+        <Button Content="Button" Canvas.Left="-84" Canvas.Top="81" Width="75" Click="Button_Click"/>
     </Canvas>
 </Window>
