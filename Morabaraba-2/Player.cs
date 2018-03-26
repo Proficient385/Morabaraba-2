@@ -16,7 +16,7 @@ namespace Morabaraba_2
         public int lives { get; set; }
         private string stage;
         public List<Point> playedPos;
-        public List<Point> mill_List;
+        public List<List<Point>> mill_List;
         private Ellipse[] pieces;
         private int pIdx;
         private Canvas brd;
@@ -30,7 +30,7 @@ namespace Morabaraba_2
             pieces = createPlayerPieces();
             GUI_pieces_allign();
             playedPos = new List<Point>();
-            mill_List = new List<Point>();
+            mill_List = new List<List<Point>>();
             stage = "Placing";
             lives = 12;
             pIdx = 0;
