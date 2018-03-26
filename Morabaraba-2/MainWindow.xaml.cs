@@ -34,16 +34,28 @@ namespace Morabaraba_2
         }
          
        
-        private void Background_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Point p = Mouse.GetPosition(Background);
-            game.gamePlay(p);   
-        }
+       
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             game = new Constraints(Piece1,Piece2, Background);
            
+        }
+
+        private void Background_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Point p = Mouse.GetPosition(Background);
+            game.gamePlay(p);
+        }
+        
+        private void Background_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Point p = Mouse.GetPosition(Background);
+            if (game.mill)
+            {
+                game.Eliminate(p);
+            }
+            game.isMill();
         }
     }
 }

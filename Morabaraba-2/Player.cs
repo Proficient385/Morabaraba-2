@@ -149,9 +149,10 @@ namespace Morabaraba_2
             stage = (pIdx>=12 ? "Moving":"Placing");
             return stage = (lives == 3 ? "Flying" : stage);
         }
-        public void eliminateOpponent(Player X)
+        public void eliminateOpponent(Player X,Point p)
         {
             X.lives--;
+            X.playedPos.Remove(p);
         }
     }
 }

@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Shapes;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Morabaraba_2
 {
@@ -19,15 +21,21 @@ namespace Morabaraba_2
         private Canvas brd;
 
         private List<List<Point>> possibleMills;
+        public bool mill;
+
+        private Ellipse piece1;
+        private Ellipse piece2;
         public Constraints(Ellipse piece1, Ellipse piece2, Canvas brd)
         {
             this.brd = brd;
+            this.piece1 = piece1;
+            this.piece2 = piece2;
             Player1 = new Player("Red", piece1, brd);
             Player2 = new Player("Yellow", piece2, brd);
             currentPlayer = "Red";
             validPos = validPosiitons();
             possibleMills = mill_Possibilities();
-            //MessageBox.Show("Length: " + possibleMills.Count());
+            mill = false; 
         }
 
         private int xCordinate (double divider)
@@ -162,7 +170,54 @@ namespace Morabaraba_2
             return result;
         }
 
-        private void isMill()
+        private Ellipse candidate(Point p)
+        {
+            foreach(object ob in brd.Children)
+            {
+                if(ob is Ellipse)
+                {
+                    Ellipse x = (Ellipse)ob;
+                    if (Canvas.GetLeft(x) + (x.ActualWidth/2) == p.X && Canvas.GetTop(x) + (x.ActualHeight/2) == p.Y)
+                    {
+                        mill = false;
+                        return x;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public void Eliminate(Point p)
+        {
+            foreach (Point point in validPos)
+            {
+                if (Math.Abs(p.X - point.X) <= 70 && Math.Abs(p.Y - point.Y) <= 70)
+                {
+                    p = point;
+                    break;
+                }
+            }
+            
+            Ellipse victim = candidate(p);
+            if (currentPlayer == "Yellow" && victim.Fill.Equals(piece2.Fill))
+            {
+                brd.Children.Remove(victim);
+            }
+            else if (currentPlayer == "Red" && victim.Fill.Equals(piece1.Fill))
+            {
+                brd.Children.Remove(victim);
+            }
+            else
+            {
+                MessageBox.Show("Don't kill yourself");
+            }
+            
+
+            if(currentPlayer=="Yellow") Player1.eliminateOpponent(Player2, p); 
+            else Player2.eliminateOpponent(Player1, p);
+            //MessageBox.Show("# : " + brd.Children.Count);
+        }
+        public void isMill()
         {
             if(currentPlayer=="Red")
             {
@@ -177,7 +232,8 @@ namespace Morabaraba_2
                     if(count==3 && !Player1.mill_List.Contains(possibleMills[i]))
                     {
                         Player1.mill_List.Add(possibleMills[i]);
-                        MessageBox.Show("RED HAS MILL");
+                        MessageBox.Show("RED HAS MILL, Choose a cow to eliminate");
+                        mill = true;
                     }
                 }
             }
@@ -194,7 +250,8 @@ namespace Morabaraba_2
                     if (count == 3 && !Player2.mill_List.Contains(possibleMills[i]))
                     {
                         Player2.mill_List.Add(possibleMills[i]);
-                        MessageBox.Show("Yellow HAS MILL");
+                        MessageBox.Show("Yellow HAS MILL, Choose a cow to eliminate");
+                        mill = true;
                     }
                 }
             }
@@ -222,5 +279,6 @@ namespace Morabaraba_2
             isMill();
             currentPlayer = swapPlayer(currentPlayer);
         }
+        
     }
 }
