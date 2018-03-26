@@ -30,7 +30,7 @@ namespace Morabaraba_2
             {
                 this.WindowState = System.Windows.WindowState.Maximized;
             }
-
+            
         }
          
        
@@ -43,6 +43,7 @@ namespace Morabaraba_2
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             game = new Constraints(Piece1,Piece2, Background);
+           
         }
     }
 }

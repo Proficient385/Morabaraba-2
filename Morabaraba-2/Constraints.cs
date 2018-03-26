@@ -16,48 +16,59 @@ namespace Morabaraba_2
 
         List<Point> validPos;
         string currentPlayer;
+        Canvas brd;
         public Constraints(Ellipse piece1, Ellipse piece2, Canvas brd)
         {
+            this.brd = brd;
             Player1 = new Player("Red", piece1, brd);
             Player2 = new Player("Yellow", piece2, brd);
             currentPlayer = "Red";
             validPos = validPosiitons();
         }
 
+        private int xCordinate (double divider)
+        {
+            return Convert.ToInt32((brd.ActualWidth / divider));
+        }
+
+        private int yCordinate(double divider)
+        {
+            return Convert.ToInt32((brd.ActualHeight / divider));
+        }
         private List<Point> validPosiitons()
         {
             List<Point> result = new List<Point>();
             // A---
-            result.Add(new Point(430, 113));
-            result.Add(new Point(863, 113));
-            result.Add(new Point(1297, 113));
+            result.Add(new Point(xCordinate(4.03), yCordinate(9.05)));
+            result.Add(new Point(xCordinate(2.007), yCordinate(9.05)));
+            result.Add(new Point(xCordinate(1.335), yCordinate(9.05)));
             // B--
-            result.Add(new Point(575, 260));
-            result.Add(new Point(863, 260));
-            result.Add(new Point(1151, 260));
+            result.Add(new Point(xCordinate(3.01), yCordinate(3.94)));
+            result.Add(new Point(xCordinate(2.007), yCordinate(3.94)));
+            result.Add(new Point(xCordinate(1.505), yCordinate(3.94)));
             // C--
-            result.Add(new Point(717, 403));
-            result.Add(new Point(863, 403));
-            result.Add(new Point(1009, 403));
+            result.Add(new Point(xCordinate(2.415), yCordinate(2.54)));
+            result.Add(new Point(xCordinate(2.007), yCordinate(2.54)));
+            result.Add(new Point(xCordinate(1.716), yCordinate(2.54)));
             // D---
-            result.Add(new Point(430, 548));
-            result.Add(new Point(575, 548));
-            result.Add(new Point(717, 548));
-            result.Add(new Point(1009, 548));
-            result.Add(new Point(1151, 548));
-            result.Add(new Point(1297, 548));
+            result.Add(new Point(xCordinate(4.03), yCordinate(1.868)));
+            result.Add(new Point(xCordinate(3.01), yCordinate(1.868)));
+            result.Add(new Point(xCordinate(2.415), yCordinate(1.868)));
+            result.Add(new Point(xCordinate(1.716), yCordinate(1.868)));
+            result.Add(new Point(xCordinate(1.505), yCordinate(1.868)));
+            result.Add(new Point(xCordinate(1.335), yCordinate(1.868)));
             // E--
-            result.Add(new Point(717, 694));
-            result.Add(new Point(863, 694));
-            result.Add(new Point(1009, 694));
+            result.Add(new Point(xCordinate(2.415), yCordinate(1.475)));
+            result.Add(new Point(xCordinate(2.007), yCordinate(1.475)));
+            result.Add(new Point(xCordinate(1.716), yCordinate(1.475)));
             // F--
-            result.Add(new Point(575, 837));
-            result.Add(new Point(863, 837));
-            result.Add(new Point(1151, 837));
+            result.Add(new Point(xCordinate(3.01), yCordinate(1.222)));
+            result.Add(new Point(xCordinate(2.007), yCordinate(1.222)));
+            result.Add(new Point(xCordinate(1.505), yCordinate(1.222)));
             // G--
-            result.Add(new Point(430, 982));
-            result.Add(new Point(863, 982));
-            result.Add(new Point(1297, 982));
+            result.Add(new Point(xCordinate(4.03), yCordinate(1.042)));
+            result.Add(new Point(xCordinate(2.007), yCordinate(1.042)));
+            result.Add(new Point(xCordinate(1.335), yCordinate(1.042)));
             return result;
         }
 

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Shapes;
+using System.Windows.Media;
 
 namespace Morabaraba_2
 {
@@ -93,8 +94,25 @@ namespace Morabaraba_2
 
         private void GUI_pieces_allign()
         {
-            if(symbol=="Red") allign_Red_Pieces();
-            else allign_Yellow_Pieces();
+            Border boarder = new Border();
+            boarder.Width = brd.ActualWidth / 5.7;
+            boarder.Height = brd.ActualHeight / 2.7;
+            Canvas.SetTop(boarder, brd.ActualHeight / 1.75);
+            boarder.BorderThickness = new Thickness(2);
+            brd.Children.Add(boarder);
+
+            if (symbol == "Red")
+            {
+                boarder.BorderBrush = Brushes.Red;
+                Canvas.SetLeft(boarder, -90);
+                allign_Red_Pieces();
+            }
+            else
+            {
+                boarder.BorderBrush = Brushes.Yellow;
+                Canvas.SetLeft(boarder, brd.ActualWidth / 1.15);
+                allign_Yellow_Pieces();
+            }
 
         }
 
