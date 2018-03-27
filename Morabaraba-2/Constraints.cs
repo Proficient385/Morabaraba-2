@@ -29,7 +29,7 @@ namespace Morabaraba_2
             Player1 = new Player("Red",brd);
             Player2 = new Player("Yellow",brd);
             currentPlayer = "Red";
-            validPos = validPosiitons();
+            validPos = validPositions();
             possibleMills = mill_Possibilities();
             mill = false; 
         }
@@ -43,7 +43,7 @@ namespace Morabaraba_2
         {
             return Convert.ToInt32((brd.ActualHeight / divider));
         }
-        private List<Point> validPosiitons()
+        private List<Point> validPositions()
         {
             List<Point> result = new List<Point>();
             // A---
@@ -175,7 +175,6 @@ namespace Morabaraba_2
                     Ellipse x = (Ellipse)ob;
                     if (Canvas.GetLeft(x) + (x.ActualWidth/2) == p.X && Canvas.GetTop(x) + (x.ActualHeight/2) == p.Y)
                     {
-                        mill = false;
                         return x;
                     }
                 }
@@ -183,6 +182,14 @@ namespace Morabaraba_2
             return null;
         }
 
+        private bool cowIn_MillPos(List<List<Point>> mill_List, Point p)
+        {
+            for(int i=0;i<mill_List.Count;i++)
+            {
+                if (mill_List[i].Contains(p)) return true;
+            }
+            return false;
+        }
         public void Eliminate(Point p)
         {
             foreach (Point point in validPos)
@@ -194,24 +201,33 @@ namespace Morabaraba_2
                 }
             }
             
-            Ellipse victim = candidate(p);
-            if (currentPlayer == "Yellow" && victim.Fill.Equals(Brushes.Yellow))
+            Ellipse victim = candidate(p); 
+            if (victim == null)
             {
-                brd.Children.Remove(victim);
-            }
-            else if (currentPlayer == "Red" && victim.Fill.Equals(Brushes.Red))
-            {
-                brd.Children.Remove(victim);
+                MessageBox.Show("Invalid point, try again");
             }
             else
             {
-                MessageBox.Show("Don't kill yourself");
+                if (currentPlayer == "Yellow" && victim.Fill.Equals(Brushes.Yellow) || currentPlayer == "Red" && victim.Fill.Equals(Brushes.Red))
+                {
+                    if (cowIn_MillPos(Player1.mill_List, p) || cowIn_MillPos(Player2.mill_List, p))
+                    {
+                        MessageBox.Show("Cannot kill a cow already in a mill, try another cow");
+                    }
+                    else
+                    {
+                        brd.Children.Remove(victim);
+                        mill = false;
+                        if (currentPlayer == "Yellow") Player1.eliminateOpponent(Player2, p);
+                        else Player2.eliminateOpponent(Player1, p);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Don't kill yourself, Try again");
+                }
             }
             
-
-            if(currentPlayer=="Yellow") Player1.eliminateOpponent(Player2, p); 
-            else Player2.eliminateOpponent(Player1, p);
-            //MessageBox.Show("# : " + brd.Children.Count);
         }
         public void isMill()
         {
@@ -267,13 +283,23 @@ namespace Morabaraba_2
                     break;
                 }
             }
-           
-            if (currentPlayer == "Red") Player1.makeMove(p);
-            else Player2.makeMove(p);
+            if (!validPos.Contains(p))
+            {
+                MessageBox.Show("You have clicked an invalid point, try again!");
+            }
+            else if(Player1.playedPos.Contains(p) || Player2.playedPos.Contains(p))
+            {
+                MessageBox.Show("The space is already occupied, try another location");
+            }
+            else
+            {
+                if (currentPlayer == "Red") Player1.makeMove(p);
+                else Player2.makeMove(p);
 
-            
-            isMill();
-            currentPlayer = swapPlayer(currentPlayer);
+
+                isMill();
+                currentPlayer = swapPlayer(currentPlayer);
+            }
         }
         
     }
