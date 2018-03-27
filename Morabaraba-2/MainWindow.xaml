@@ -1,17 +1,15 @@
-﻿<Window x:Class="Morabaraba_2.MainWindow"
+﻿<Window x:Name="Morabaraba" x:Class="Morabaraba_2.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Morabaraba_2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" ResizeMode="CanMinimize" Background="#FF000964">
+        Title="Morabaraba" Height="350" Width="525" ResizeMode="CanMinimize" Background="#FF000964" Icon="Icon.jpg">
     <Canvas x:Name="Background" Margin="107,18,81,16"  MouseLeftButtonDown="Background_MouseLeftButtonDown" MouseRightButtonDown="Background_MouseRightButtonDown" >
         <Canvas.Background>
             <ImageBrush ImageSource="Board2.PNG" Stretch="Uniform"/>
         </Canvas.Background>
-        <Ellipse x:Name="Piece1" Height="70" Canvas.Left="-479" Stroke="Black" Canvas.Top="167" Width="70" Fill="#FFF72424" RenderTransformOrigin="3.188,0.834"/>
-        <Ellipse x:Name="Piece2" Height="70" Canvas.Left="-479" Stroke="Black" Canvas.Top="58" Width="70" Fill="#FFEEF724" RenderTransformOrigin="3.188,0.834"/>
         <Button Content="Button" Canvas.Left="-84" Canvas.Top="81" Width="75" Click="Button_Click"/>
     </Canvas>
 </Window>

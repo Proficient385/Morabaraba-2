@@ -22,16 +22,12 @@ namespace Morabaraba_2
 
         private List<List<Point>> possibleMills;
         public bool mill;
-
-        private Ellipse piece1;
-        private Ellipse piece2;
-        public Constraints(Ellipse piece1, Ellipse piece2, Canvas brd)
+        
+        public Constraints(Canvas brd)
         {
             this.brd = brd;
-            this.piece1 = piece1;
-            this.piece2 = piece2;
-            Player1 = new Player("Red", piece1, brd);
-            Player2 = new Player("Yellow", piece2, brd);
+            Player1 = new Player("Red",brd);
+            Player2 = new Player("Yellow",brd);
             currentPlayer = "Red";
             validPos = validPosiitons();
             possibleMills = mill_Possibilities();
@@ -199,11 +195,11 @@ namespace Morabaraba_2
             }
             
             Ellipse victim = candidate(p);
-            if (currentPlayer == "Yellow" && victim.Fill.Equals(piece2.Fill))
+            if (currentPlayer == "Yellow" && victim.Fill.Equals(Brushes.Yellow))
             {
                 brd.Children.Remove(victim);
             }
-            else if (currentPlayer == "Red" && victim.Fill.Equals(piece1.Fill))
+            else if (currentPlayer == "Red" && victim.Fill.Equals(Brushes.Red))
             {
                 brd.Children.Remove(victim);
             }
