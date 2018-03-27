@@ -14,6 +14,7 @@ namespace Morabaraba_2
     {
         public string symbol { get; private set; }
         public int lives { get; set; }
+        public int kills { get; set; }
         public string stage;
         public List<Point> playedPos;
         public List<List<Point>> mill_List;
@@ -30,6 +31,7 @@ namespace Morabaraba_2
             mill_List = new List<List<Point>>();
             stage = "Placing";
             lives = 12;
+            kills = 0;
             pIdx = 0;
         }
        
@@ -70,6 +72,7 @@ namespace Morabaraba_2
         public void eliminateOpponent(Player X,Point p)
         {
             X.lives--;
+            kills++;
             X.playedPos.Remove(p);
         }
     }

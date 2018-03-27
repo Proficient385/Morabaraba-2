@@ -15,11 +15,13 @@ namespace Morabaraba_2
     {
         private Player Player1;
         private Player Player2;
-        private GUI playerGUI;
-        
+        private GUI player1GUI;
+        private GUI player2GUI;
+
         private List<Point> validPos;
         private string currentPlayer;
         private Canvas brd;
+        private Label playerTurn;
 
         private List<List<Point>> possibleMills;
         public bool mill;
@@ -30,15 +32,24 @@ namespace Morabaraba_2
             Player1 = new Player("Red",brd);
             Player2 = new Player("Yellow",brd);
 
-            playerGUI = new GUI(Player1);
-            playerGUI.GUI_pieces_allign();
-            playerGUI = new GUI(Player2);
-            playerGUI.GUI_pieces_allign();
+            player1GUI = new GUI(Player1);
+            player2GUI = new GUI(Player2);
+
+            player1GUI.GUI_pieces_allign();
+            player1GUI.GUI_update();
+            player2GUI.GUI_pieces_allign();
+            player2GUI.GUI_update();
 
             currentPlayer = "Red";
+            playerTurn = new Label();
             validPos = validPositions();
             possibleMills = mill_Possibilities();
-            mill = false; 
+            mill = false;
+
+            if (currentPlayer == "Red")
+            {
+                player2GUI.playerTurn.Visibility = Visibility.Hidden;
+            }
         }
 
         private int xCordinate (double divider)
@@ -50,6 +61,7 @@ namespace Morabaraba_2
         {
             return Convert.ToInt32((brd.ActualHeight / divider));
         }
+
         private List<Point> validPositions()
         {
             List<Point> result = new List<Point>();
@@ -285,6 +297,17 @@ namespace Morabaraba_2
 
         public void gamePlay(Point p)
         {
+            if(currentPlayer=="Red")
+            {
+                player2GUI.playerTurn.Visibility = Visibility.Visible;
+                player1GUI.playerTurn.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                player1GUI.playerTurn.Visibility = Visibility.Visible;
+                player2GUI.playerTurn.Visibility = Visibility.Hidden;
+            }
+
             foreach (Point point in validPos)
             {
                 if (Math.Abs(p.X - point.X) <= 70 && Math.Abs(p.Y - point.Y) <= 70)

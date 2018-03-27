@@ -15,11 +15,13 @@ namespace Morabaraba_2
         Player player;
         Ellipse[] pieces;
         Canvas brd;
+        public Label playerTurn;
         public GUI(Player player)
         {
             this.player = player;
             pieces = player.pieces;
             brd = player.brd;
+            playerTurn = GUI_gameUpdate();
         }
 
         private double getLeft(double divider)
@@ -126,5 +128,68 @@ namespace Morabaraba_2
 
         }
 
+        public void GUI_update()
+        {
+            Label player_Lives = new Label();
+            player_Lives.Width = getLeft(7);
+            player_Lives.Height = getTop(15);
+            player_Lives.FontSize = getTop(50);
+            player_Lives.FontFamily = new FontFamily("Broadway");
+
+            Label player_Kills = new Label();
+            player_Kills.Width = getLeft(7);
+            player_Kills.Height = getTop(15);
+            player_Kills.FontSize = getTop(50);
+            player_Kills.FontFamily = new FontFamily("Snap ITC");
+
+            Canvas.SetTop(player_Lives, getTop(2));
+            Canvas.SetTop(player_Kills, getTop(1.9));
+            brd.Children.Add(player_Lives);
+            brd.Children.Add(player_Kills);
+
+            player_Lives.Content = "Cows remaining  : " + player.lives;
+            player_Kills.Content = "Cows eliminated : " + player.kills;
+
+            if (player.symbol == "Red")
+            {
+                player_Lives.Foreground = Brushes.Red;
+                player_Kills.Foreground = Brushes.Yellow;
+                Canvas.SetLeft(player_Lives, -getLeft(30));
+                Canvas.SetLeft(player_Kills, -getLeft(30));
+            }
+            else
+            {
+                player_Lives.Foreground = Brushes.Yellow;
+                player_Kills.Foreground = Brushes.Red;
+                Canvas.SetLeft(player_Lives, getLeft(1.12));
+                Canvas.SetLeft(player_Kills, getLeft(1.12));
+            }
+        }
+
+        public Label GUI_gameUpdate()
+        {
+            Label player_Turn = new Label();
+            player_Turn.Width = getLeft(4);
+            player_Turn.Height = getTop(15);
+            player_Turn.FontSize = getTop(50);
+            player_Turn.FontFamily = new FontFamily("Wide Latin");
+
+            Canvas.SetTop(player_Turn, getTop(8));
+            brd.Children.Add(player_Turn);
+
+            if (player.symbol == "Red")
+            {
+                player_Turn.Foreground = Brushes.Red;
+                player_Turn.Content = "Player 1 make a move";
+                Canvas.SetLeft(player_Turn, -getLeft(17));
+            }
+            else
+            {
+                player_Turn.Foreground = Brushes.Yellow;
+                player_Turn.Content = "Player 2 make a move";
+                Canvas.SetLeft(player_Turn, getLeft(1.23));
+            }
+            return player_Turn;
+        }
     }
 }
