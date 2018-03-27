@@ -17,117 +17,26 @@ namespace Morabaraba_2
         public string stage;
         public List<Point> playedPos;
         public List<List<Point>> mill_List;
-        private Ellipse[] pieces;
+        public Ellipse[] pieces;
         private int pIdx;
-        private Canvas brd;
+        public Canvas brd;
 
         public Player(string symbol,Canvas brd)
         {
             this.symbol = symbol;
             this.brd = brd;
             pieces = createPlayerPieces();
-            GUI_pieces_allign();
             playedPos = new List<Point>();
             mill_List = new List<List<Point>>();
             stage = "Placing";
             lives = 12;
             pIdx = 0;
-            //MessageBox.Show("110----X: " + Convert.ToInt32(brd.ActualWidth / 15.8));
         }
-
-        private double getLeft(double divider)
-        {
-            return brd.ActualWidth / divider;
-        }
-
-        private double getTop(double divider)
-        {
-            return brd.ActualHeight / divider;
-        }
-        private void allign_Red_Pieces()
-        {
-            Canvas.SetLeft(pieces[0], -getLeft(24.7));
-            Canvas.SetTop(pieces[0], getTop(1.7));
-            Canvas.SetLeft(pieces[1], getLeft(85));
-            Canvas.SetTop(pieces[1], getTop(1.7));
-            Canvas.SetLeft(pieces[2], getLeft(15.8));
-            Canvas.SetTop(pieces[2], getTop(1.7));
-            Canvas.SetLeft(pieces[3], -getLeft(24.7));
-            Canvas.SetTop(pieces[3], getTop(1.5));
-            Canvas.SetLeft(pieces[4], getLeft(85));
-            Canvas.SetTop(pieces[4], getTop(1.5));
-            Canvas.SetLeft(pieces[5], getLeft(15.8));
-            Canvas.SetTop(pieces[5], getTop(1.5));
-            Canvas.SetLeft(pieces[6], -getLeft(24.7));
-            Canvas.SetTop(pieces[6], getTop(1.33));
-            Canvas.SetLeft(pieces[7], getLeft(85));
-            Canvas.SetTop(pieces[7], getTop(1.33));
-            Canvas.SetLeft(pieces[8], getLeft(15.8));
-            Canvas.SetTop(pieces[8], getTop(1.33));
-            Canvas.SetLeft(pieces[9], -getLeft(24.7));
-            Canvas.SetTop(pieces[9], getTop(1.2));
-            Canvas.SetLeft(pieces[10], getLeft(85));
-            Canvas.SetTop(pieces[10], getTop(1.2));
-            Canvas.SetLeft(pieces[11], getLeft(15.8));
-            Canvas.SetTop(pieces[11], getTop(1.2));
-        }
-
-        private void allign_Yellow_Pieces()
-        {
-            Canvas.SetLeft(pieces[0], getLeft(1.13));
-            Canvas.SetTop(pieces[0], getTop(1.7));
-            Canvas.SetLeft(pieces[1], getLeft(1.070));
-            Canvas.SetTop(pieces[1], getTop(1.7));
-            Canvas.SetLeft(pieces[2], getLeft(1.015));
-            Canvas.SetTop(pieces[2], getTop(1.7));
-            Canvas.SetLeft(pieces[3], getLeft(1.13));
-            Canvas.SetTop(pieces[3], getTop(1.5));
-            Canvas.SetLeft(pieces[4], getLeft(1.070));
-            Canvas.SetTop(pieces[4], getTop(1.5));
-            Canvas.SetLeft(pieces[5], getLeft(1.015));
-            Canvas.SetTop(pieces[5], getTop(1.5));
-            Canvas.SetLeft(pieces[6], getLeft(1.13));
-            Canvas.SetTop(pieces[6], getTop(1.33));
-            Canvas.SetLeft(pieces[7], getLeft(1.070));
-            Canvas.SetTop(pieces[7], getTop(1.33));
-            Canvas.SetLeft(pieces[8], getLeft(1.015));
-            Canvas.SetTop(pieces[8], getTop(1.33));
-            Canvas.SetLeft(pieces[9], getLeft(1.13));
-            Canvas.SetTop(pieces[9], getTop(1.2));
-            Canvas.SetLeft(pieces[10], getLeft(1.070));
-            Canvas.SetTop(pieces[10], getTop(1.2));
-            Canvas.SetLeft(pieces[11], getLeft(1.015));
-            Canvas.SetTop(pieces[11], getTop(1.2));
-        }
-
-        private void GUI_pieces_allign()
-        {
-            Border boarder = new Border();
-            boarder.Width = getLeft(5.7);
-            boarder.Height = getTop(2.7);
-            Canvas.SetTop(boarder, getTop(1.75));
-            boarder.BorderThickness = new Thickness(2);
-            brd.Children.Add(boarder);
-
-            if (symbol == "Red")
-            {
-                boarder.BorderBrush = Brushes.Red;
-                Canvas.SetLeft(boarder, -getLeft(18));
-                allign_Red_Pieces();
-            }
-            else
-            {
-                boarder.BorderBrush = Brushes.Yellow;
-                Canvas.SetLeft(boarder, getLeft(1.15));
-                allign_Yellow_Pieces();
-            }
-
-        }
-
+       
         private Ellipse[] createPlayerPieces()
         {
             Ellipse[] result = new Ellipse[12];
-            int dimension = Convert.ToInt32(getLeft(24.7));
+            int dimension = Convert.ToInt32(brd.ActualWidth/24.7);
             for (int i = 0; i < 12;i++)
             {
                 Ellipse p = new Ellipse();

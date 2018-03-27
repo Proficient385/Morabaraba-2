@@ -15,7 +15,8 @@ namespace Morabaraba_2
     {
         private Player Player1;
         private Player Player2;
-
+        private GUI playerGUI;
+        
         private List<Point> validPos;
         private string currentPlayer;
         private Canvas brd;
@@ -28,6 +29,12 @@ namespace Morabaraba_2
             this.brd = brd;
             Player1 = new Player("Red",brd);
             Player2 = new Player("Yellow",brd);
+
+            playerGUI = new GUI(Player1);
+            playerGUI.GUI_pieces_allign();
+            playerGUI = new GUI(Player2);
+            playerGUI.GUI_pieces_allign();
+
             currentPlayer = "Red";
             validPos = validPositions();
             possibleMills = mill_Possibilities();
