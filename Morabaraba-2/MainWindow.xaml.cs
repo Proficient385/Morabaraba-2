@@ -44,6 +44,11 @@ namespace Morabaraba_2
 
         private void Background_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if(game.mill)
+            {
+                MessageBox.Show("The is mill, first choose a cow to eliminate before continuing");
+                return;
+            }
             Point p = Mouse.GetPosition(Background);
             game.gamePlay(p);
         }

@@ -190,6 +190,7 @@ namespace Morabaraba_2
             }
             return false;
         }
+
         public void Eliminate(Point p)
         {
             foreach (Point point in validPos)
@@ -229,6 +230,7 @@ namespace Morabaraba_2
             }
             
         }
+
         public void isMill()
         {
             if(currentPlayer=="Red")
@@ -268,6 +270,7 @@ namespace Morabaraba_2
                 }
             }
         }
+
         private string swapPlayer(string player)
         {
             return player == "Red" ? "Yellow" : "Red";
@@ -287,9 +290,14 @@ namespace Morabaraba_2
             {
                 MessageBox.Show("You have clicked an invalid point, try again!");
             }
-            else if(Player1.playedPos.Contains(p) || Player2.playedPos.Contains(p))
+            else if(Player1.playedPos.Contains(p) && Player1.stage=="Placing" || Player2.playedPos.Contains(p) && Player2.stage == "Placing")
             {
                 MessageBox.Show("The space is already occupied, try another location");
+            }
+            else if (Player1.playedPos.Contains(p) && Player1.stage == "Moving" || Player2.playedPos.Contains(p) && Player2.stage == "Moving")
+            {
+                MessageBox.Show("Time to Move");
+                MessageBox.Show("Player 2 stage is:" + Player2.stage);
             }
             else
             {

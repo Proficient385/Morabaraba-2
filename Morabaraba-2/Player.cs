@@ -14,7 +14,7 @@ namespace Morabaraba_2
     {
         public string symbol { get; private set; }
         public int lives { get; set; }
-        private string stage;
+        public string stage;
         public List<Point> playedPos;
         public List<List<Point>> mill_List;
         private Ellipse[] pieces;
@@ -72,8 +72,6 @@ namespace Morabaraba_2
             Canvas.SetTop(pieces[11], getTop(1.2));
         }
 
-        
-
         private void allign_Yellow_Pieces()
         {
             Canvas.SetLeft(pieces[0], getLeft(1.13));
@@ -105,22 +103,22 @@ namespace Morabaraba_2
         private void GUI_pieces_allign()
         {
             Border boarder = new Border();
-            boarder.Width = brd.ActualWidth / 5.7;
-            boarder.Height = brd.ActualHeight / 2.7;
-            Canvas.SetTop(boarder, brd.ActualHeight / 1.75);
+            boarder.Width = getLeft(5.7);
+            boarder.Height = getTop(2.7);
+            Canvas.SetTop(boarder, getTop(1.75));
             boarder.BorderThickness = new Thickness(2);
             brd.Children.Add(boarder);
 
             if (symbol == "Red")
             {
                 boarder.BorderBrush = Brushes.Red;
-                Canvas.SetLeft(boarder, -90);
+                Canvas.SetLeft(boarder, -getLeft(18));
                 allign_Red_Pieces();
             }
             else
             {
                 boarder.BorderBrush = Brushes.Yellow;
-                Canvas.SetLeft(boarder, brd.ActualWidth / 1.15);
+                Canvas.SetLeft(boarder, getLeft(1.15));
                 allign_Yellow_Pieces();
             }
 
@@ -129,7 +127,7 @@ namespace Morabaraba_2
         private Ellipse[] createPlayerPieces()
         {
             Ellipse[] result = new Ellipse[12];
-            int dimension = Convert.ToInt32(brd.ActualWidth / 24.7);
+            int dimension = Convert.ToInt32(getLeft(24.7));
             for (int i = 0; i < 12;i++)
             {
                 Ellipse p = new Ellipse();
