@@ -21,10 +21,11 @@ namespace Morabaraba_2
         private List<Point> validPos;
         private string currentPlayer;
         private Canvas brd;
-        private Label playerTurn;
 
         private List<List<Point>> possibleMills;
         public bool mill;
+
+        //private Label error_msg;
         
         public Constraints(Canvas brd)
         {
@@ -41,10 +42,10 @@ namespace Morabaraba_2
             player2GUI.GUI_update();
 
             currentPlayer = "Red";
-            playerTurn = new Label();
             validPos = validPositions();
             possibleMills = mill_Possibilities();
             mill = false;
+           // error_msg = new Label();
 
             if (currentPlayer == "Red")
             {
@@ -221,32 +222,21 @@ namespace Morabaraba_2
                 }
             }
             
-            Ellipse victim = candidate(p); 
-            if (victim == null)
+            if (!invalidKill(p))
             {
-                MessageBox.Show("Invalid point, try again");
+                Ellipse victim = candidate(p);
+                brd.Children.Remove(victim);
+                mill = false;
+                if (currentPlayer == "Red") Player1.eliminateOpponent(Player2, p);
+                else Player2.eliminateOpponent(Player1, p);
+
+                currentPlayer = swapPlayer(currentPlayer);
             }
             else
             {
-                if (currentPlayer == "Yellow" && victim.Fill.Equals(Brushes.Yellow) || currentPlayer == "Red" && victim.Fill.Equals(Brushes.Red))
-                {
-                    if (cowIn_MillPos(Player1.mill_List, p) || cowIn_MillPos(Player2.mill_List, p))
-                    {
-                        MessageBox.Show("Cannot kill a cow already in a mill, try another cow");
-                    }
-                    else
-                    {
-                        brd.Children.Remove(victim);
-                        mill = false;
-                        if (currentPlayer == "Yellow") Player1.eliminateOpponent(Player2, p);
-                        else Player2.eliminateOpponent(Player1, p);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Don't kill yourself, Try again");
-                }
+                MessageBox.Show("Don't kill yourself, Try again");
             }
+            
             
         }
 
@@ -265,7 +255,7 @@ namespace Morabaraba_2
                     if(count==3 && !Player1.mill_List.Contains(possibleMills[i]))
                     {
                         Player1.mill_List.Add(possibleMills[i]);
-                        MessageBox.Show("RED HAS MILL, Choose a cow to eliminate");
+                        invalidMove0("RED HAS MILL, Choose a cow\n to eliminate");
                         mill = true;
                     }
                 }
@@ -283,9 +273,81 @@ namespace Morabaraba_2
                     if (count == 3 && !Player2.mill_List.Contains(possibleMills[i]))
                     {
                         Player2.mill_List.Add(possibleMills[i]);
-                        MessageBox.Show("Yellow HAS MILL, Choose a cow to eliminate");
+                        invalidMove0("Yellow HAS MILL, Choose a cow\n to eliminate");
                         mill = true;
                     }
+                }
+            }
+        }
+
+        public void invalidMove0(string err_message)
+        {
+            if (currentPlayer == "Red")
+            {
+                player1GUI.player_err_msg.Visibility = Visibility.Visible;
+                player1GUI.player_err_msg.Content = err_message;
+            }
+            else
+            {
+                player2GUI.player_err_msg.Visibility = Visibility.Visible;
+                player2GUI.player_err_msg.Content = err_message;
+            }
+            
+        }
+
+        public bool invalidMove(Point p)
+        {
+            if (!validPos.Contains(p))
+            {
+                invalidMove0("You have clicked an \ninvalid point, try again!");
+                return true;
+            }
+            else if (Player1.playedPos.Contains(p) && Player1.stage == "Placing" || Player2.playedPos.Contains(p) && Player2.stage == "Placing")
+            {
+                invalidMove0("The space is already \noccupied, try another location");
+                return true;
+            }
+            else if (Player1.playedPos.Contains(p) && Player1.stage == "Moving" || Player2.playedPos.Contains(p) && Player2.stage == "Moving")
+            {
+                MessageBox.Show("OK Moving Time");
+                return false;
+            }
+            return false;
+        }
+
+        bool invalidKill(Point p)
+        {
+            Ellipse victim = candidate(p);
+            if (victim == null)
+            {
+                invalidMove0("Invalid point, try again");
+                return true;
+            }
+            else
+            {
+                if (currentPlayer == "Red" && victim.Fill.Equals(Brushes.Yellow))
+                {
+                    if (cowIn_MillPos(Player2.mill_List, p))
+                    {
+                        invalidMove0("Cannot kill a cow already in a mill,\n try another cow");
+                        return true;
+                    }
+                    return false;
+                    
+                }
+                else if(currentPlayer == "Yellow" && victim.Fill.Equals(Brushes.Red))
+                {
+                    if (cowIn_MillPos(Player1.mill_List, p))
+                    {
+                        invalidMove0("Cannot kill a cow already in a mill,\n try another cow");
+                        return true;
+                    }
+                    return false;
+                }
+                else
+                {
+                    invalidMove0("Don't kill yourself, Try again");
+                    return true;
                 }
             }
         }
@@ -297,17 +359,6 @@ namespace Morabaraba_2
 
         public void gamePlay(Point p)
         {
-            if(currentPlayer=="Red")
-            {
-                player2GUI.playerTurn.Visibility = Visibility.Visible;
-                player1GUI.playerTurn.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                player1GUI.playerTurn.Visibility = Visibility.Visible;
-                player2GUI.playerTurn.Visibility = Visibility.Hidden;
-            }
-
             foreach (Point point in validPos)
             {
                 if (Math.Abs(p.X - point.X) <= 70 && Math.Abs(p.Y - point.Y) <= 70)
@@ -316,27 +367,39 @@ namespace Morabaraba_2
                     break;
                 }
             }
-            if (!validPos.Contains(p))
+            if (invalidMove(p))
             {
-                MessageBox.Show("You have clicked an invalid point, try again!");
-            }
-            else if(Player1.playedPos.Contains(p) && Player1.stage=="Placing" || Player2.playedPos.Contains(p) && Player2.stage == "Placing")
-            {
-                MessageBox.Show("The space is already occupied, try another location");
-            }
-            else if (Player1.playedPos.Contains(p) && Player1.stage == "Moving" || Player2.playedPos.Contains(p) && Player2.stage == "Moving")
-            {
-                MessageBox.Show("Time to Move");
-                MessageBox.Show("Player 2 stage is:" + Player2.stage);
+                return;
             }
             else
             {
+                
                 if (currentPlayer == "Red") Player1.makeMove(p);
                 else Player2.makeMove(p);
 
-
                 isMill();
-                currentPlayer = swapPlayer(currentPlayer);
+
+               // 
+                if (!mill)
+                {
+                    
+                    player1GUI.player_err_msg.Visibility = Visibility.Hidden;
+                    player2GUI.player_err_msg.Visibility = Visibility.Hidden;
+
+
+                    currentPlayer = swapPlayer(currentPlayer);
+
+                    if (currentPlayer == "Yellow")
+                    {
+                        player2GUI.playerTurn.Visibility = Visibility.Visible;
+                        player1GUI.playerTurn.Visibility = Visibility.Hidden;
+                    }
+                    else
+                    {
+                        player1GUI.playerTurn.Visibility = Visibility.Visible;
+                        player2GUI.playerTurn.Visibility = Visibility.Hidden;
+                    }
+                }
             }
         }
         

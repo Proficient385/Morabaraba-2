@@ -16,12 +16,15 @@ namespace Morabaraba_2
         Ellipse[] pieces;
         Canvas brd;
         public Label playerTurn;
+        public Label player_err_msg;
+
         public GUI(Player player)
         {
             this.player = player;
             pieces = player.pieces;
             brd = player.brd;
             playerTurn = GUI_gameUpdate();
+            player_err_msg = player_Error_Message();
         }
 
         private double getLeft(double divider)
@@ -190,6 +193,33 @@ namespace Morabaraba_2
                 Canvas.SetLeft(player_Turn, getLeft(1.23));
             }
             return player_Turn;
+        }
+
+        public Label player_Error_Message()
+        {
+            Label player_errMsg = new Label();
+            player_errMsg.Width = getLeft(4);
+            player_errMsg.Height = getTop(10);
+            player_errMsg.FontSize = getTop(45);
+            player_errMsg.FontFamily = new FontFamily("OCR A Extended");
+
+            Canvas.SetTop(player_errMsg, getTop(4));
+            brd.Children.Add(player_errMsg);
+
+            if (player.symbol == "Red")
+            {
+                player_errMsg.Foreground = Brushes.DarkOrange;
+                player_errMsg.Content = "Player 1 Error Message";
+                Canvas.SetLeft(player_errMsg, -getLeft(25));
+            }
+            else
+            {
+                player_errMsg.Foreground = Brushes.DarkOrange;
+                player_errMsg.Content = "Player 2 Error message";
+                Canvas.SetLeft(player_errMsg, getLeft(1.25));
+            }
+            player_errMsg.Visibility = Visibility.Hidden;
+            return player_errMsg;
         }
     }
 }
