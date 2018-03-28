@@ -75,6 +75,7 @@ namespace Morabaraba_2
             kills++;
             X.playedPos.Remove(p);
         }
+        
     }
 }
 

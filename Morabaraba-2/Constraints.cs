@@ -24,8 +24,6 @@ namespace Morabaraba_2
 
         private List<List<Point>> possibleMills;
         public bool mill;
-
-        //private Label error_msg;
         
         public Constraints(Canvas brd)
         {
@@ -35,22 +33,13 @@ namespace Morabaraba_2
 
             player1GUI = new GUI(Player1);
             player2GUI = new GUI(Player2);
-
-            player1GUI.GUI_pieces_allign();
-            player1GUI.GUI_update();
-            player2GUI.GUI_pieces_allign();
-            player2GUI.GUI_update();
-
+            
             currentPlayer = "Red";
             validPos = validPositions();
             possibleMills = mill_Possibilities();
             mill = false;
-           // error_msg = new Label();
 
-            if (currentPlayer == "Red")
-            {
-                player2GUI.playerTurn.Visibility = Visibility.Hidden;
-            }
+            player2GUI.playerTurn.Visibility = Visibility.Hidden;
         }
 
         private int xCordinate (double divider)
@@ -211,6 +200,27 @@ namespace Morabaraba_2
             return false;
         }
 
+        private void run_playerTurnGUI()
+        {
+            if (!mill)
+            {
+                player1GUI.player_err_msg.Visibility = Visibility.Hidden;
+                player2GUI.player_err_msg.Visibility = Visibility.Hidden;
+
+                currentPlayer = swapPlayer(currentPlayer);
+                if (currentPlayer == "Yellow")
+                {
+                    player2GUI.playerTurn.Visibility = Visibility.Visible;
+                    player1GUI.playerTurn.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    player1GUI.playerTurn.Visibility = Visibility.Visible;
+                    player2GUI.playerTurn.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
         public void Eliminate(Point p)
         {
             foreach (Point point in validPos)
@@ -230,14 +240,11 @@ namespace Morabaraba_2
                 if (currentPlayer == "Red") Player1.eliminateOpponent(Player2, p);
                 else Player2.eliminateOpponent(Player1, p);
 
-                currentPlayer = swapPlayer(currentPlayer);
+                player1GUI.GUI_update();
+                player2GUI.GUI_update();
+                run_playerTurnGUI();
             }
-            else
-            {
-                MessageBox.Show("Don't kill yourself, Try again");
-            }
-            
-            
+
         }
 
         public void isMill()
@@ -373,33 +380,11 @@ namespace Morabaraba_2
             }
             else
             {
-                
                 if (currentPlayer == "Red") Player1.makeMove(p);
                 else Player2.makeMove(p);
 
                 isMill();
-
-               // 
-                if (!mill)
-                {
-                    
-                    player1GUI.player_err_msg.Visibility = Visibility.Hidden;
-                    player2GUI.player_err_msg.Visibility = Visibility.Hidden;
-
-
-                    currentPlayer = swapPlayer(currentPlayer);
-
-                    if (currentPlayer == "Yellow")
-                    {
-                        player2GUI.playerTurn.Visibility = Visibility.Visible;
-                        player1GUI.playerTurn.Visibility = Visibility.Hidden;
-                    }
-                    else
-                    {
-                        player1GUI.playerTurn.Visibility = Visibility.Visible;
-                        player2GUI.playerTurn.Visibility = Visibility.Hidden;
-                    }
-                }
+                run_playerTurnGUI();
             }
         }
         

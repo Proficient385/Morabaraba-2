@@ -17,14 +17,23 @@ namespace Morabaraba_2
         Canvas brd;
         public Label playerTurn;
         public Label player_err_msg;
+        private Label player_Lives;
+        private Label player_Kills;
 
         public GUI(Player player)
         {
             this.player = player;
             pieces = player.pieces;
             brd = player.brd;
-            playerTurn = GUI_gameUpdate();
+            playerTurn = playerTurn_label();
             player_err_msg = player_Error_Message();
+
+            player_Lives = new Label();
+            player_Kills = new Label();
+
+            GUI_labels_allign();
+            GUI_pieces_allign();
+            GUI_update();
         }
 
         private double getLeft(double divider)
@@ -36,6 +45,7 @@ namespace Morabaraba_2
         {
             return brd.ActualHeight / divider;
         }
+
         private void allign_Red_Pieces()
         {
             Canvas.SetLeft(pieces[0], -getLeft(24.7));
@@ -92,7 +102,7 @@ namespace Morabaraba_2
             Canvas.SetTop(pieces[11], getTop(1.2));
         }
 
-        public void GUI_pieces_allign()
+        private void GUI_pieces_allign()
         {
             Border boarder = new Border();
             boarder.Width = getLeft(5.7);
@@ -131,15 +141,13 @@ namespace Morabaraba_2
 
         }
 
-        public void GUI_update()
+        private void GUI_labels_allign()
         {
-            Label player_Lives = new Label();
             player_Lives.Width = getLeft(7);
             player_Lives.Height = getTop(15);
             player_Lives.FontSize = getTop(50);
             player_Lives.FontFamily = new FontFamily("Broadway");
 
-            Label player_Kills = new Label();
             player_Kills.Width = getLeft(7);
             player_Kills.Height = getTop(15);
             player_Kills.FontSize = getTop(50);
@@ -168,8 +176,8 @@ namespace Morabaraba_2
                 Canvas.SetLeft(player_Kills, getLeft(1.12));
             }
         }
-
-        public Label GUI_gameUpdate()
+        
+        private Label playerTurn_label()
         {
             Label player_Turn = new Label();
             player_Turn.Width = getLeft(4);
@@ -195,7 +203,7 @@ namespace Morabaraba_2
             return player_Turn;
         }
 
-        public Label player_Error_Message()
+        private Label player_Error_Message()
         {
             Label player_errMsg = new Label();
             player_errMsg.Width = getLeft(4);
@@ -209,17 +217,23 @@ namespace Morabaraba_2
             if (player.symbol == "Red")
             {
                 player_errMsg.Foreground = Brushes.DarkOrange;
-                player_errMsg.Content = "Player 1 Error Message";
                 Canvas.SetLeft(player_errMsg, -getLeft(25));
             }
             else
             {
                 player_errMsg.Foreground = Brushes.DarkOrange;
-                player_errMsg.Content = "Player 2 Error message";
                 Canvas.SetLeft(player_errMsg, getLeft(1.25));
             }
             player_errMsg.Visibility = Visibility.Hidden;
             return player_errMsg;
         }
+
+        public void GUI_update()
+        {
+            player_Lives.Content = "Cows remaining  : " + player.lives;
+            player_Kills.Content = "Cows eliminated : " + player.kills;
+
+        }
+
     }
 }
