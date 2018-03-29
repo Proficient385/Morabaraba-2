@@ -25,8 +25,9 @@ namespace Morabaraba_2
 
         private List<List<Point>> possibleMills;
         private List<List<Point>> neighbourPos;
+
         public bool mill;
-        
+        private int magicNumber;
         public Constraints(Canvas brd)
         {
             this.brd = brd;
@@ -41,7 +42,8 @@ namespace Morabaraba_2
             possibleMills = mill_Possibilities();
             neighbourPos = neighbours();
             mill = false;
-            
+            magicNumber = (int)Player1.pieces[0].Width;
+
             player2GUI.playerTurn.Visibility = Visibility.Hidden;
         }
 
@@ -246,7 +248,6 @@ namespace Morabaraba_2
             for (int i = 0; i < neighbours2.Count; i++) result.Add(neighbours2[i]);
             for (int i = 0; i < neighbours3.Count; i++) result.Add(neighbours3[i]);
 
-            MessageBox.Show("" + result.Count);
             return result;
         }
 
@@ -327,6 +328,18 @@ namespace Morabaraba_2
             }
             return null;
         }
+        
+        private void brokenMill(List<List<Point>> mill_List, Point p)
+        {
+            for (int i = 0; i < mill_List.Count; i++)
+            {
+                if (mill_List[i].Contains(p))
+                {
+                    mill_List.Remove(mill_List[i]);
+                    return;
+                }
+            }
+        }
 
         private bool cowIn_MillPos(List<List<Point>> mill_List, Point p)
         {
@@ -385,7 +398,9 @@ namespace Morabaraba_2
                 else Player2.eliminateOpponent(Player1, p);
 
                 player1GUI.GUI_update();
+                Player1.stageUpdate();
                 player2GUI.GUI_update();
+                Player2.stageUpdate();
                 run_playerTurnGUI();
             }
 
@@ -450,7 +465,7 @@ namespace Morabaraba_2
         {
             foreach (Point point in validPos)
             {
-                if (Math.Abs(p1.X - point.X) <= 70 && Math.Abs(p1.Y - point.Y) <= 70)
+                if (Math.Abs(p1.X - point.X) <= magicNumber && Math.Abs(p1.Y - point.Y) <= magicNumber)
                 {
                     p1 = point;
                 }
@@ -475,6 +490,8 @@ namespace Morabaraba_2
                 int index = getIndex(p1);
                 if (!neighbourPos[index].Contains(p2))
                 {
+                    if (currentPlayer == "Red" && Player1.stage == "Flying") return false;
+                    if (currentPlayer == "Yellow" && Player2.stage == "Flying") return false;
                     messageDisplay("Cannot move to that\nlocation, try another location");
                     return true;
                 }
@@ -494,11 +511,11 @@ namespace Morabaraba_2
                 messageDisplay("The space is already \noccupied, try another location");
                 return true;
             }
-            else if (Player1.playedPos.Contains(p) && Player1.stage == "Moving")
+            else if (Player1.playedPos.Contains(p) && Player1.stage != "Placing")
             {
                 return invalidMove0(p,p2);
             }
-            else if (Player2.playedPos.Contains(p) && Player2.stage == "Moving")
+            else if (Player2.playedPos.Contains(p) && Player2.stage != "Placing")
             {
                 return invalidMove0(p,p2);
             }
@@ -582,11 +599,11 @@ namespace Morabaraba_2
         {
             foreach (Point point in validPos)
             {
-                if (Math.Abs(p1.X - point.X) <= 70 && Math.Abs(p1.Y - point.Y) <= 70)
+                if (Math.Abs(p1.X - point.X) <= magicNumber && Math.Abs(p1.Y - point.Y) <= magicNumber)
                 {
                     p1 = point;
                 }
-                if (Math.Abs(p2.X - point.X) <= 70 && Math.Abs(p2.Y - point.Y) <= 70)
+                if (Math.Abs(p2.X - point.X) <= magicNumber && Math.Abs(p2.Y - point.Y) <= magicNumber)
                 {
                     p2 = point;
                 }
@@ -597,9 +614,18 @@ namespace Morabaraba_2
             }
             else
             {
-                if (currentPlayer == "Red") Player1.placePiece(p1,p2);
-                else Player2.placePiece(p1,p2);
+                if (currentPlayer == "Red")
+                {
+                    Player1.makeMove(p1, p2);
+                    if (cowIn_MillPos(Player1.mill_List, p1)) brokenMill(Player1.mill_List, p1);
+                }
+                else
+                {
+                    Player2.makeMove(p1, p2);
+                    if (cowIn_MillPos(Player2.mill_List, p1)) brokenMill(Player2.mill_List, p1);
+                }
 
+                
                 isMill();
                 run_playerTurnGUI();
             }

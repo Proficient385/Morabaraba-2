@@ -67,12 +67,12 @@ namespace Morabaraba_2
             if (moves[0].X == 0) moves[0] = p1;
             else moves[1] = p1;
 
-            if (game.Player1.stage == "Moving" && moves[1].X==0 && game.currentPlayer=="Red")
+            if (game.Player1.stage != "Placing" && moves[1].X==0 && game.currentPlayer=="Red")
             {
                 second_Move_request(game.player1GUI, moves);
                 return;
             }
-            else if (game.Player2.stage == "Moving" && moves[1].X == 0 && game.currentPlayer == "Yellow")
+            else if (game.Player2.stage != "Placing" && moves[1].X == 0 && game.currentPlayer == "Yellow")
             {
                 second_Move_request(game.player2GUI, moves);
                 return;

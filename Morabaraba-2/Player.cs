@@ -30,7 +30,7 @@ namespace Morabaraba_2
             playedPos = new List<Point>();
             mill_List = new List<List<Point>>();
             stage = "Placing";
-            lives = 12;
+            lives = 4;
             kills = 0;
             pIdx = 0;
         }
@@ -52,9 +52,8 @@ namespace Morabaraba_2
             return result;
         }
         
-        public void placePiece(Point P1 , Point P2)
+        public void makeMove(Point P1 , Point P2)
         {
-            //stage = stageUpdate();
             if (stage == "Placing")
             {
                 playedPos.Add(P1);
@@ -62,9 +61,8 @@ namespace Morabaraba_2
                 Canvas.SetTop(pieces[pIdx], (P1.Y - (pieces[pIdx].ActualHeight / 2)));
                 pIdx++;
             }
-            else if(stage=="Moving")
+            else
             {
-                MessageBox.Show($"Last player {symbol} : Movements should start!");
                 movePiece(P1, P2);
             }
             stage = stageUpdate();
@@ -97,11 +95,12 @@ namespace Morabaraba_2
             }
         }
 
-        private string stageUpdate()
+        public string stageUpdate()
         {
-            stage = (pIdx>=3 ? "Moving":"Placing");
+            stage = (pIdx>=4 ? "Moving":"Placing");
             return stage = (lives == 3 ? "Flying" : stage);
         }
+
         public void eliminateOpponent(Player X,Point p)
         {
             X.lives--;
