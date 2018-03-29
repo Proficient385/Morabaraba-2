@@ -191,13 +191,13 @@ namespace Morabaraba_2
             if (player.symbol == "Red")
             {
                 player_Turn.Foreground = Brushes.Red;
-                player_Turn.Content = "Player 1 make a move";
+                //player_Turn.Content = (player.stage=="Placing"?"Player 1 make a move": "Player 1 click\n a move from position");
                 Canvas.SetLeft(player_Turn, -getLeft(17));
             }
             else
             {
                 player_Turn.Foreground = Brushes.Yellow;
-                player_Turn.Content = "Player 2 make a move";
+                //player_Turn.Content = (player.stage == "Placing" ? "Player 2 make a move" : "Player 2 click\n a move from position");
                 Canvas.SetLeft(player_Turn, getLeft(1.23));
             }
             return player_Turn;
@@ -232,7 +232,7 @@ namespace Morabaraba_2
         {
             player_Lives.Content = "Cows remaining  : " + player.lives;
             player_Kills.Content = "Cows eliminated : " + player.kills;
-
+            playerTurn.Content = (player.stage == "Placing" ? "Place a piece\non the board" : "click\n a move from position");
         }
 
     }
