@@ -58,8 +58,10 @@ namespace Morabaraba_2
             pg.player_err_msg.Visibility = Visibility.Hidden;
            
         }
+
         private void Background_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (game.draw) return;
             if (game_over) return;
             if(game.mill)
             {
@@ -84,6 +86,8 @@ namespace Morabaraba_2
             
             game.gamePlay(moves[0],moves[1]);
             moves[0].X = moves[0].Y = moves[1].X = moves[1].Y = 0;
+
+            if (game.draw) return;
             game.player1GUI.GUI_update();
             game.player2GUI.GUI_update();
         }
@@ -103,8 +107,11 @@ namespace Morabaraba_2
             game_over = true;
         }
 
+       
+
         private void Background_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (game.draw) return;
             if (game_over) return;
             Point p = Mouse.GetPosition(Background);
             if (game.mill)

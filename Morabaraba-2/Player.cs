@@ -30,7 +30,7 @@ namespace Morabaraba_2
             playedPos = new List<Point>();
             mill_List = new List<List<Point>>();
             stage = "Placing";
-            lives = 4;
+            lives = 12;
             kills = 0;
             pIdx = 0;
         }
@@ -97,7 +97,7 @@ namespace Morabaraba_2
 
         public string stageUpdate()
         {
-            stage = (pIdx>=4 ? "Moving":"Placing");
+            stage = (pIdx>=12 ? "Moving":"Placing");
             return stage = (lives == 3 ? "Flying" : stage);
         }
 

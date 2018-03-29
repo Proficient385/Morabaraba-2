@@ -27,6 +27,7 @@ namespace Morabaraba_2
         private List<List<Point>> neighbourPos;
 
         public bool mill;
+        public bool draw;
         private int magicNumber;
         public Constraints(Canvas brd)
         {
@@ -42,6 +43,7 @@ namespace Morabaraba_2
             possibleMills = mill_Possibilities();
             neighbourPos = neighbours();
             mill = false;
+            draw = false;
             magicNumber = (int)Player1.pieces[0].Width;
 
             player2GUI.playerTurn.Visibility = Visibility.Hidden;
@@ -594,7 +596,29 @@ namespace Morabaraba_2
             return player == "Red" ? "Yellow" : "Red";
         }
         
+        private bool drawGame()
+        {
+            int countEmpty = 0;
+            foreach (Point p in validPos)
+            {
+                if (Player2.playedPos.Contains(p) || Player1.playedPos.Contains(p)) countEmpty++;
+            }
+            return countEmpty == 24;
+        }
 
+        private void drawGame(GUI pgWinner, GUI pgLoser)
+        {
+            pgWinner.playerTurn.Visibility = Visibility.Visible;
+            pgLoser.playerTurn.Visibility = Visibility.Visible;
+            pgWinner.player_err_msg.Visibility = Visibility.Visible;
+            pgLoser.player_err_msg.Visibility = Visibility.Visible;
+
+            pgWinner.playerTurn.Content = "DRAW";
+            pgWinner.player_err_msg.Content = "Game is a draw, game Over!";
+            pgLoser.playerTurn.Content = "DRAW";
+            pgLoser.player_err_msg.Content = "Game is a draw, game Over!";
+            draw = true;
+        }
         public void gamePlay(Point p1, Point p2)
         {
             foreach (Point point in validPos)
@@ -625,6 +649,14 @@ namespace Morabaraba_2
                     if (cowIn_MillPos(Player2.mill_List, p1)) brokenMill(Player2.mill_List, p1);
                 }
 
+                if (Player1.stage != "Placing" || Player1.stage != "Placing")
+                {
+                    if(drawGame())
+                    {
+                        drawGame(player1GUI, player2GUI);
+                        return;
+                    }
+                }
                 
                 isMill();
                 run_playerTurnGUI();
