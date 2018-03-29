@@ -315,6 +315,18 @@ namespace Morabaraba_2
             }
         }
 
+        public bool player_own_Point(Point p1)
+        {
+            foreach (Point point in validPos)
+            {
+                if (Math.Abs(p1.X - point.X) <= 70 && Math.Abs(p1.Y - point.Y) <= 70)
+                {
+                    p1 = point;
+                }
+            }
+            return (currentPlayer=="Red"?Player1.playedPos.Contains(p1): Player2.playedPos.Contains(p1));
+        }
+
         private bool invalidMove0(Point p)
         {
             if (!validPos.Contains(p))
