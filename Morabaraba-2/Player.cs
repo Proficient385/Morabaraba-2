@@ -54,7 +54,7 @@ namespace Morabaraba_2
         
         public void placePiece(Point P1 , Point P2)
         {
-            stage = stageUpdate();
+            //stage = stageUpdate();
             if (stage == "Placing")
             {
                 playedPos.Add(P1);
@@ -64,8 +64,10 @@ namespace Morabaraba_2
             }
             else if(stage=="Moving")
             {
+                MessageBox.Show($"Last player {symbol} : Movements should start!");
                 movePiece(P1, P2);
             }
+            stage = stageUpdate();
         }
 
         private void locatePiece_and_move(Point pt_from, Point pt_to)
@@ -74,12 +76,13 @@ namespace Morabaraba_2
             {
                 if((Canvas.GetLeft(piece)+ piece.ActualWidth / 2) == pt_from.X && (Canvas.GetTop(piece)+ piece.ActualWidth / 2) == pt_from.Y)
                 {
-                    Canvas.SetLeft(piece, pt_to.X- (piece.ActualWidth / 2));
-                    Canvas.SetTop(piece, pt_to.Y - (piece.ActualHeight / 2));
+                    Canvas.SetLeft(piece, (pt_to.X- (piece.ActualWidth / 2)));
+                    Canvas.SetTop(piece, (pt_to.Y - (piece.ActualHeight / 2)));
+                    return;
                 }
             }
         }
-
+        
         public void movePiece(Point pt_from, Point pt_to)
         {
             foreach(Point point in playedPos)
@@ -89,6 +92,7 @@ namespace Morabaraba_2
                     playedPos.Remove(point);
                     playedPos.Add(pt_to);
                     locatePiece_and_move(pt_from, pt_to);
+                    break;
                 }
             }
         }
