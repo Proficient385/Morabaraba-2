@@ -14,13 +14,13 @@ namespace Morabaraba_2
 {
     class Constraints
     {
-        private Player Player1;
-        private Player Player2;
-        private GUI player1GUI;
-        private GUI player2GUI;
+        public Player Player1;
+        public Player Player2;
+        public GUI player1GUI;
+        public GUI player2GUI;
 
         private List<Point> validPos;
-        private string currentPlayer;
+        public string currentPlayer;
         private Canvas brd;
 
         private List<List<Point>> possibleMills;
@@ -206,6 +206,8 @@ namespace Morabaraba_2
 
         private void run_playerTurnGUI()
         {
+          //  player1GUI.GUI_update();
+           // player2GUI.GUI_update();
             if (!mill)
             {
                 player1GUI.player_err_msg.Visibility = Visibility.Hidden;
@@ -313,9 +315,22 @@ namespace Morabaraba_2
             }
         }
 
-        
+        private bool invalidMove0(Point p)
+        {
+            if (!validPos.Contains(p))
+            {
+                messageDisplay("You have clicked an \ninvalid point, try again!");
+                return true;
+            }
+            else if (Player1.playedPos.Contains(p) || Player2.playedPos.Contains(p))
+            {
+                messageDisplay("The space is already \noccupied, try another location");
+                return true;
+            }
+            return false;
+        }
 
-        private bool invalidMove(Point p)
+        private bool invalidMove(Point p, Point p2)
         {
             if (!validPos.Contains(p))
             {
@@ -327,10 +342,13 @@ namespace Morabaraba_2
                 messageDisplay("The space is already \noccupied, try another location");
                 return true;
             }
-            else if (Player1.playedPos.Contains(p) && Player1.stage == "Moving" || Player2.playedPos.Contains(p) && Player2.stage == "Moving")
+            else if (Player1.playedPos.Contains(p) && Player1.stage == "Moving")
             {
-                MessageBox.Show("OK Moving Time");
-                return false;
+                return invalidMove0(p2);
+            }
+            else if (Player2.playedPos.Contains(p) && Player2.stage == "Moving")
+            {
+                return invalidMove0(p2);
             }
             return false;
         }
@@ -388,6 +406,7 @@ namespace Morabaraba_2
             pg2.playerTurn.Visibility = Visibility.Visible;
             return true;
         }
+
         private bool invalidKill_specialCase()
         {
             if (currentPlayer == "Red")
@@ -400,29 +419,33 @@ namespace Morabaraba_2
             }
        
         }
+
         private string swapPlayer(string player)
         {
             return player == "Red" ? "Yellow" : "Red";
         }
 
-        public void gamePlay(Point p)
+        public void gamePlay(Point p1, Point p2)
         {
             foreach (Point point in validPos)
             {
-                if (Math.Abs(p.X - point.X) <= 70 && Math.Abs(p.Y - point.Y) <= 70)
+                if (Math.Abs(p1.X - point.X) <= 70 && Math.Abs(p1.Y - point.Y) <= 70)
                 {
-                    p = point;
-                    break;
+                    p1 = point;
+                }
+                if (Math.Abs(p2.X - point.X) <= 70 && Math.Abs(p2.Y - point.Y) <= 70)
+                {
+                    p2 = point;
                 }
             }
-            if (invalidMove(p))
+            if (invalidMove(p1,p2))
             {
                 return;
             }
             else
             {
-                if (currentPlayer == "Red") Player1.makeMove(p);
-                else Player2.makeMove(p);
+                if (currentPlayer == "Red") Player1.placePiece(p1,p2);
+                else Player2.placePiece(p1,p2);
 
                 isMill();
                 run_playerTurnGUI();
