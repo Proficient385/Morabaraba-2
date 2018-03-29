@@ -24,9 +24,8 @@ namespace Morabaraba_2
         private Canvas brd;
 
         private List<List<Point>> possibleMills;
+        private List<List<Point>> neighbourPos;
         public bool mill;
-
-        public Stopwatch msgTimer; 
         
         public Constraints(Canvas brd)
         {
@@ -40,9 +39,9 @@ namespace Morabaraba_2
             currentPlayer = "Red";
             validPos = validPositions();
             possibleMills = mill_Possibilities();
+            neighbourPos = neighbours();
             mill = false;
-            msgTimer = new Stopwatch();
-
+            
             player2GUI.playerTurn.Visibility = Visibility.Hidden;
         }
 
@@ -60,36 +59,36 @@ namespace Morabaraba_2
         {
             List<Point> result = new List<Point>();
             // A---
-            result.Add(new Point(xCordinate(4.03), yCordinate(9.05)));
-            result.Add(new Point(xCordinate(2.007), yCordinate(9.05)));
-            result.Add(new Point(xCordinate(1.335), yCordinate(9.05)));     
+            result.Add(new Point(xCordinate(4.03), yCordinate(9.05)));            //A1
+            result.Add(new Point(xCordinate(2.007), yCordinate(9.05)));           //A4
+            result.Add(new Point(xCordinate(1.335), yCordinate(9.05)));           //A7
             // B--
-            result.Add(new Point(xCordinate(3.01), yCordinate(3.94)));
-            result.Add(new Point(xCordinate(2.007), yCordinate(3.94)));
-            result.Add(new Point(xCordinate(1.505), yCordinate(3.94)));
+            result.Add(new Point(xCordinate(3.01), yCordinate(3.94)));            //B2
+            result.Add(new Point(xCordinate(2.007), yCordinate(3.94)));           //B4
+            result.Add(new Point(xCordinate(1.505), yCordinate(3.94)));           //B7
             // C--
-            result.Add(new Point(xCordinate(2.415), yCordinate(2.54)));
-            result.Add(new Point(xCordinate(2.007), yCordinate(2.54)));
-            result.Add(new Point(xCordinate(1.716), yCordinate(2.54)));
+            result.Add(new Point(xCordinate(2.415), yCordinate(2.54)));           //C3
+            result.Add(new Point(xCordinate(2.007), yCordinate(2.54)));           //C4
+            result.Add(new Point(xCordinate(1.716), yCordinate(2.54)));           //C5
             // D---
-            result.Add(new Point(xCordinate(4.03), yCordinate(1.868)));
-            result.Add(new Point(xCordinate(3.01), yCordinate(1.868)));
-            result.Add(new Point(xCordinate(2.415), yCordinate(1.868)));
-            result.Add(new Point(xCordinate(1.716), yCordinate(1.868)));
-            result.Add(new Point(xCordinate(1.505), yCordinate(1.868)));
-            result.Add(new Point(xCordinate(1.335), yCordinate(1.868)));
+            result.Add(new Point(xCordinate(4.03), yCordinate(1.868)));           //D1
+            result.Add(new Point(xCordinate(3.01), yCordinate(1.868)));           //D2
+            result.Add(new Point(xCordinate(2.415), yCordinate(1.868)));          //D3
+            result.Add(new Point(xCordinate(1.716), yCordinate(1.868)));          //D5
+            result.Add(new Point(xCordinate(1.505), yCordinate(1.868)));          //D6
+            result.Add(new Point(xCordinate(1.335), yCordinate(1.868)));          //D7
             // E--
-            result.Add(new Point(xCordinate(2.415), yCordinate(1.475)));
-            result.Add(new Point(xCordinate(2.007), yCordinate(1.475)));
-            result.Add(new Point(xCordinate(1.716), yCordinate(1.475)));
+            result.Add(new Point(xCordinate(2.415), yCordinate(1.475)));          //E3
+            result.Add(new Point(xCordinate(2.007), yCordinate(1.475)));          //E4  
+            result.Add(new Point(xCordinate(1.716), yCordinate(1.475)));          //E5
             // F--
-            result.Add(new Point(xCordinate(3.01), yCordinate(1.222)));
-            result.Add(new Point(xCordinate(2.007), yCordinate(1.222)));
-            result.Add(new Point(xCordinate(1.505), yCordinate(1.222)));
+            result.Add(new Point(xCordinate(3.01), yCordinate(1.222)));           //F2
+            result.Add(new Point(xCordinate(2.007), yCordinate(1.222)));          //F4
+            result.Add(new Point(xCordinate(1.505), yCordinate(1.222)));          //F6
             // G--
-            result.Add(new Point(xCordinate(4.03), yCordinate(1.042)));
-            result.Add(new Point(xCordinate(2.007), yCordinate(1.042)));
-            result.Add(new Point(xCordinate(1.335), yCordinate(1.042)));
+            result.Add(new Point(xCordinate(4.03), yCordinate(1.042)));           //G1
+            result.Add(new Point(xCordinate(2.007), yCordinate(1.042)));          //G4
+            result.Add(new Point(xCordinate(1.335), yCordinate(1.042)));          //G7
             return result;
         }
 
@@ -179,6 +178,140 @@ namespace Morabaraba_2
             return result;
         }
 
+        private List<List<Point>> neighbours()
+        {
+            List<List<Point>> result = new List<List<Point>>();
+            Point a1 = new Point(xCordinate(4.03), yCordinate(9.05));
+            Point a4 = new Point(xCordinate(2.007), yCordinate(9.05));
+            Point a7 = new Point(xCordinate(1.335), yCordinate(9.05));
+            
+            Point b2 = new Point(xCordinate(3.01), yCordinate(3.94));
+            Point b4 = new Point(xCordinate(2.007), yCordinate(3.94));
+            Point b6 = new Point(xCordinate(1.505), yCordinate(3.94));
+            
+            Point c3 = new Point(xCordinate(2.415), yCordinate(2.54));
+            Point c4 = new Point(xCordinate(2.007), yCordinate(2.54));
+            Point c5 = new Point(xCordinate(1.716), yCordinate(2.54));
+            
+            Point d1 = new Point(xCordinate(4.03), yCordinate(1.868));
+            Point d2 = new Point(xCordinate(3.01), yCordinate(1.868));
+            Point d3 = new Point(xCordinate(2.415), yCordinate(1.868));
+            
+            Point d5 = new Point(xCordinate(1.716), yCordinate(1.868));
+            Point d6 = new Point(xCordinate(1.505), yCordinate(1.868));
+            Point d7 = new Point(xCordinate(1.335), yCordinate(1.868));
+            
+            Point e3 = new Point(xCordinate(2.415), yCordinate(1.475));
+            Point e4 = new Point(xCordinate(2.007), yCordinate(1.475));
+            Point e5 = new Point(xCordinate(1.716), yCordinate(1.475));
+            
+            Point f2 = new Point(xCordinate(3.01), yCordinate(1.222));
+            Point f4 = new Point(xCordinate(2.007), yCordinate(1.222));
+            Point f6 = new Point(xCordinate(1.505), yCordinate(1.222));
+            
+            Point g1 = new Point(xCordinate(4.03), yCordinate(1.042));
+            Point g4 = new Point(xCordinate(2.007), yCordinate(1.042));
+            Point g7 = new Point(xCordinate(1.335), yCordinate(1.042));
+
+            List<Point> a1_neighbours = new List<Point> { d1, b2, a4 };
+            List<Point> a4_neighbours = new List<Point> { a7, b4, a1 };
+            List<Point> a7_neighbours = new List<Point> { d7, b6, a4 };
+            List<Point> b2_neighbours = new List<Point> { c3, a1, d2, b4 };
+            List<Point> b4_neighbours = new List<Point> { c4, b2, a4, b6 };
+            List<Point> b6_neighbours = new List<Point> { c5, d6, b4, a7 };
+            List<Point> c3_neighbours = new List<Point> { d3, b2, c4 };
+            List<Point> c4_neighbours = new List<Point> { c3, b4, c5 };
+            List<Point> c5_neighbours = new List<Point> { c4, b6, d5 };
+            List<Point> d1_neighbours = new List<Point> { a1, g1, d2 };
+            List<Point> d2_neighbours = new List<Point> { d1, d3, b2,f2 };
+            List<Point> d3_neighbours = new List<Point> { d2, c3, e3 };
+            List<Point> d5_neighbours = new List<Point> { c5, e5, d6 };
+            List<Point> d6_neighbours = new List<Point> { d5, b6, f6,d7 };
+            List<Point> d7_neighbours = new List<Point> { d6, a7, g1 };
+            List<Point> e3_neighbours = new List<Point> { d3, f2, e4 };
+            List<Point> e4_neighbours = new List<Point> { e3, f6, e5 };
+            List<Point> e5_neighbours = new List<Point> { e4, f6, d5 };
+            List<Point> f2_neighbours = new List<Point> { d2, g1, e3, f4 };
+            List<Point> f4_neighbours = new List<Point> { f2, e4, g4,f6 };
+            List<Point> f6_neighbours = new List<Point> { f4, e5, d6,g7 };
+            List<Point> g1_neighbours = new List<Point> { d1, g4, f2 };
+            List<Point> g4_neighbours = new List<Point> { g1, f4, g7 };
+            List<Point> g7_neighbours = new List<Point> { g4, f6, d7 };
+
+            List<List<Point>> neighbours1 = new List<List<Point>> { a1_neighbours, a4_neighbours, a7_neighbours, b2_neighbours, b4_neighbours, b6_neighbours, c3_neighbours, c4_neighbours};
+            List<List<Point>> neighbours2 = new List<List<Point>> { c5_neighbours, d1_neighbours, d2_neighbours, d3_neighbours, d5_neighbours, d6_neighbours, d7_neighbours, e3_neighbours };
+            List<List<Point>> neighbours3 = new List<List<Point>> { e4_neighbours, e5_neighbours, f2_neighbours, f4_neighbours, f6_neighbours, g1_neighbours, g4_neighbours, g7_neighbours };
+
+            for (int i = 0; i < neighbours1.Count; i++) result.Add(neighbours1[i]);
+            for (int i = 0; i < neighbours2.Count; i++) result.Add(neighbours2[i]);
+            for (int i = 0; i < neighbours3.Count; i++) result.Add(neighbours3[i]);
+
+            MessageBox.Show("" + result.Count);
+            return result;
+        }
+
+        private int getIndex(Point p)
+        {
+            Point a1 = new Point(xCordinate(4.03), yCordinate(9.05));
+            Point a4 = new Point(xCordinate(2.007), yCordinate(9.05));
+            Point a7 = new Point(xCordinate(1.335), yCordinate(9.05));
+
+            Point b2 = new Point(xCordinate(3.01), yCordinate(3.94));
+            Point b4 = new Point(xCordinate(2.007), yCordinate(3.94));
+            Point b6 = new Point(xCordinate(1.505), yCordinate(3.94));
+
+            Point c3 = new Point(xCordinate(2.415), yCordinate(2.54));
+            Point c4 = new Point(xCordinate(2.007), yCordinate(2.54));
+            Point c5 = new Point(xCordinate(1.716), yCordinate(2.54));
+
+            Point d1 = new Point(xCordinate(4.03), yCordinate(1.868));
+            Point d2 = new Point(xCordinate(3.01), yCordinate(1.868));
+            Point d3 = new Point(xCordinate(2.415), yCordinate(1.868));
+
+            Point d5 = new Point(xCordinate(1.716), yCordinate(1.868));
+            Point d6 = new Point(xCordinate(1.505), yCordinate(1.868));
+            Point d7 = new Point(xCordinate(1.335), yCordinate(1.868));
+
+            Point e3 = new Point(xCordinate(2.415), yCordinate(1.475));
+            Point e4 = new Point(xCordinate(2.007), yCordinate(1.475));
+            Point e5 = new Point(xCordinate(1.716), yCordinate(1.475));
+
+            Point f2 = new Point(xCordinate(3.01), yCordinate(1.222));
+            Point f4 = new Point(xCordinate(2.007), yCordinate(1.222));
+            Point f6 = new Point(xCordinate(1.505), yCordinate(1.222));
+
+            Point g1 = new Point(xCordinate(4.03), yCordinate(1.042));
+            Point g4 = new Point(xCordinate(2.007), yCordinate(1.042));
+            Point g7 = new Point(xCordinate(1.335), yCordinate(1.042));
+
+            if (p == a1) return 0;
+            if (p == a4) return 1;
+            if (p == a7) return 2;
+            if (p == b2) return 3;
+            if (p == b4) return 4;
+            if (p == b6) return 5;
+            if (p == c3) return 6;
+            if (p == c4) return 7;
+            if (p == c5) return 8;
+            if (p == d1) return 9;
+            if (p == d2) return 10;
+            if (p == d3) return 11;
+            if (p == d5) return 12;
+            if (p == d6) return 13;
+            if (p == d7) return 14;
+            if (p == e3) return 15;
+            if (p == e4) return 16;
+            if (p == e5) return 17;
+            if (p == f2) return 18;
+            if (p == f4) return 19;
+            if (p == f6) return 20;
+            if (p == g1) return 21;
+            if (p == g4) return 22;
+            if (p == g7) return 23;
+
+            return -1;
+        }
+
         private Ellipse candidate(Point p)
         {
             foreach(object ob in brd.Children)
@@ -206,8 +339,6 @@ namespace Morabaraba_2
 
         private void run_playerTurnGUI()
         {
-          //  player1GUI.GUI_update();
-           // player2GUI.GUI_update();
             if (!mill)
             {
                 player1GUI.player_err_msg.Visibility = Visibility.Hidden;
@@ -327,17 +458,26 @@ namespace Morabaraba_2
             return (currentPlayer=="Red"?Player1.playedPos.Contains(p1): Player2.playedPos.Contains(p1));
         }
 
-        private bool invalidMove0(Point p)
+        private bool invalidMove0(Point p1, Point p2)
         {
-            if (!validPos.Contains(p))
+            if (!validPos.Contains(p2))
             {
                 messageDisplay("You have clicked an \ninvalid point, try again!");
                 return true;
             }
-            else if (Player1.playedPos.Contains(p) || Player2.playedPos.Contains(p))
+            else if (Player1.playedPos.Contains(p2) || Player2.playedPos.Contains(p2))
             {
                 messageDisplay("The space is already \noccupied, try another location");
                 return true;
+            }
+            else
+            {
+                int index = getIndex(p1);
+                if (!neighbourPos[index].Contains(p2))
+                {
+                    messageDisplay("Cannot move to that\nlocation, try another location");
+                    return true;
+                }
             }
             return false;
         }
@@ -356,11 +496,11 @@ namespace Morabaraba_2
             }
             else if (Player1.playedPos.Contains(p) && Player1.stage == "Moving")
             {
-                return invalidMove0(p2);
+                return invalidMove0(p,p2);
             }
             else if (Player2.playedPos.Contains(p) && Player2.stage == "Moving")
             {
-                return invalidMove0(p2);
+                return invalidMove0(p,p2);
             }
             return false;
         }
@@ -436,6 +576,7 @@ namespace Morabaraba_2
         {
             return player == "Red" ? "Yellow" : "Red";
         }
+        
 
         public void gamePlay(Point p1, Point p2)
         {

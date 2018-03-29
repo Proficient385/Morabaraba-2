@@ -99,7 +99,7 @@ namespace Morabaraba_2
 
         private string stageUpdate()
         {
-            stage = (pIdx>=12 ? "Moving":"Placing");
+            stage = (pIdx>=3 ? "Moving":"Placing");
             return stage = (lives == 3 ? "Flying" : stage);
         }
         public void eliminateOpponent(Player X,Point p)
