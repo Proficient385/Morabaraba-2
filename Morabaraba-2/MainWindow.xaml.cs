@@ -22,6 +22,7 @@ namespace Morabaraba_2
     {
         Constraints game;
         Point[] moves;
+        bool game_over;
         public MainWindow()
         {
             InitializeComponent();
@@ -40,6 +41,8 @@ namespace Morabaraba_2
         {
             game = new Constraints(Background);
             moves = new Point[] { new Point(0,0), new Point(0,0)};
+            game_over = false;
+            start.IsEnabled = false;
         }
 
         private void second_Move_request(GUI pg, Point[] moves)
@@ -57,6 +60,7 @@ namespace Morabaraba_2
         }
         private void Background_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (game_over) return;
             if(game.mill)
             {
                 game.messageDisplay("The is mill, first choose a \ncow to eliminate before \ncontinuing, use mouse \nleft click to kill");
@@ -83,13 +87,38 @@ namespace Morabaraba_2
             game.player1GUI.GUI_update();
             game.player2GUI.GUI_update();
         }
+       
+        private void gameOver(GUI pgWinner, GUI pgLoser)
+        {
+            pgWinner.playerTurn.Visibility = Visibility.Visible;
+            pgLoser.playerTurn.Visibility = Visibility.Visible;
+            pgWinner.player_err_msg.Visibility = Visibility.Visible;
+            pgLoser.player_err_msg.Visibility = Visibility.Visible;
+
+            pgWinner.playerTurn.Content = "WINNER";
+            pgWinner.player_err_msg.Content = "CONGRADULATION\n  you have won the game";
+            pgLoser.playerTurn.Content = "LOSER";
+            pgLoser.player_err_msg.Content = "You have lost the game\n  try harder next time!";
+
+            game_over = true;
+        }
 
         private void Background_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (game_over) return;
             Point p = Mouse.GetPosition(Background);
             if (game.mill)
             {
                 game.Eliminate(p);
+
+                if(game.Player1.lives==2)
+                {
+                    gameOver(game.player2GUI, game.player1GUI);
+                }
+                if(game.Player2.lives==2)
+                {
+                    gameOver(game.player1GUI, game.player2GUI);
+                }
             }
             game.isMill();
         }

@@ -229,7 +229,7 @@ namespace Morabaraba_2
             List<Point> d3_neighbours = new List<Point> { d2, c3, e3 };
             List<Point> d5_neighbours = new List<Point> { c5, e5, d6 };
             List<Point> d6_neighbours = new List<Point> { d5, b6, f6,d7 };
-            List<Point> d7_neighbours = new List<Point> { d6, a7, g1 };
+            List<Point> d7_neighbours = new List<Point> { d6, a7, g7 };
             List<Point> e3_neighbours = new List<Point> { d3, f2, e4 };
             List<Point> e4_neighbours = new List<Point> { e3, f6, e5 };
             List<Point> e5_neighbours = new List<Point> { e4, f6, d5 };
@@ -370,7 +370,7 @@ namespace Morabaraba_2
                 }
             }
         }
-
+        
         public void Eliminate(Point p)
         {
             if (invalidKill_specialCase())

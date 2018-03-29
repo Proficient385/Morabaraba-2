@@ -10,6 +10,6 @@
         <Canvas.Background>
             <ImageBrush ImageSource="Board2.PNG" Stretch="Uniform"/>
         </Canvas.Background>
-        <Button Content="Start Game" Canvas.Left="-84" Canvas.Top="81" Width="75" Click="Button_Click" Height="27"/>
+        <Button x:Name="start" Content="Start Game" Canvas.Left="-84" Canvas.Top="81" Width="75" Click="Button_Click" Height="27"/>
     </Canvas>
 </Window>
