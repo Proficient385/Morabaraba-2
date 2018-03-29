@@ -22,7 +22,7 @@ namespace Morabaraba_2
         private int pIdx;
         public Canvas brd;
 
-        public Player(string symbol,Canvas brd)
+        public Player(string symbol, Canvas brd)
         {
             this.symbol = symbol;
             this.brd = brd;
@@ -34,43 +34,68 @@ namespace Morabaraba_2
             kills = 0;
             pIdx = 0;
         }
-       
+
         private Ellipse[] createPlayerPieces()
         {
             Ellipse[] result = new Ellipse[12];
-            int dimension = Convert.ToInt32(brd.ActualWidth/24.7);
-            for (int i = 0; i < 12;i++)
+            int dimension = Convert.ToInt32(brd.ActualWidth / 24.7);
+            for (int i = 0; i < 12; i++)
             {
                 Ellipse p = new Ellipse();
                 p.Height = dimension;
                 p.Width = dimension;
-                p.Fill = symbol=="Red"? Brushes.Red: Brushes.Yellow;
+                p.Fill = symbol == "Red" ? Brushes.Red : Brushes.Yellow;
                 brd.Children.Add(p);
                 result[i] = p;
             }
-            
+
             return result;
         }
-
-        public void makeMove(Point P)
+        
+        public void placePiece(Point P1 , Point P2)
         {
             stage = stageUpdate();
             if (stage == "Placing")
             {
-                playedPos.Add(P);
-                Canvas.SetLeft(pieces[pIdx], (P.X - (pieces[pIdx].ActualWidth / 2)));
-                Canvas.SetTop(pieces[pIdx], (P.Y - (pieces[pIdx].ActualHeight / 2)));
+                playedPos.Add(P1);
+                Canvas.SetLeft(pieces[pIdx], (P1.X - (pieces[pIdx].ActualWidth / 2)));
+                Canvas.SetTop(pieces[pIdx], (P1.Y - (pieces[pIdx].ActualHeight / 2)));
                 pIdx++;
             }
-            else
+            else if(stage=="Moving")
             {
-                MessageBox.Show("Do you know what it is?, Moving time yaaaaaay!");
+                movePiece(P1, P2);
+            }
+        }
+
+        private void locatePiece_and_move(Point pt_from, Point pt_to)
+        {
+            foreach (Ellipse piece in pieces)
+            {
+                if((Canvas.GetLeft(piece)+ piece.ActualWidth / 2) == pt_from.X && (Canvas.GetTop(piece)+ piece.ActualWidth / 2) == pt_from.Y)
+                {
+                    Canvas.SetLeft(piece, pt_to.X- (piece.ActualWidth / 2));
+                    Canvas.SetTop(piece, pt_to.Y - (piece.ActualHeight / 2));
+                }
+            }
+        }
+
+        public void movePiece(Point pt_from, Point pt_to)
+        {
+            foreach(Point point in playedPos)
+            {
+                if(point.Equals(pt_from))
+                {
+                    playedPos.Remove(point);
+                    playedPos.Add(pt_to);
+                    locatePiece_and_move(pt_from, pt_to);
+                }
             }
         }
 
         private string stageUpdate()
         {
-            stage = (pIdx>=12 ? "Moving":"Placing");
+            stage = (pIdx>=3 ? "Moving":"Placing");
             return stage = (lives == 3 ? "Flying" : stage);
         }
         public void eliminateOpponent(Player X,Point p)
