@@ -47,7 +47,7 @@ namespace Morabaraba_2
             if(game.mill)
             {
                 //MessageBox.Show("The is mill, first choose a cow to eliminate before continuing");
-                game.invalidMove0("The is mill, first choose a \ncow to eliminate before \ncontinuing, use mouse \nleft click to kill");
+                game.messageDisplay("The is mill, first choose a \ncow to eliminate before \ncontinuing, use mouse \nleft click to kill");
                 return;
             }
             Point p = Mouse.GetPosition(Background);

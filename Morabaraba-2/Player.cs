@@ -62,6 +62,10 @@ namespace Morabaraba_2
                 Canvas.SetTop(pieces[pIdx], (P.Y - (pieces[pIdx].ActualHeight / 2)));
                 pIdx++;
             }
+            else
+            {
+                MessageBox.Show("Do you know what it is?, Moving time yaaaaaay!");
+            }
         }
 
         private string stageUpdate()
