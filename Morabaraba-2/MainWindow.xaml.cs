@@ -24,6 +24,7 @@ namespace Morabaraba_2
         Point[] moves;
         bool game_start;
         bool game_over;
+        Ellipse currentPiece;
         public MainWindow()
         {
             InitializeComponent();
@@ -127,7 +128,7 @@ namespace Morabaraba_2
             }
         }
 
-        private void second_Move_request(GUI pg, Point[] moves)
+        private void second_Move_request(GUI pg, Point[] moves, Player player)
         {
             if (!game.player_own_Point(moves[0]))
             {
@@ -135,6 +136,25 @@ namespace Morabaraba_2
                 pg.player_err_msg.Visibility = Visibility.Visible;
                 moves[0].X = moves[0].Y = 0;
                 return;
+            }
+            moves[0] = game.pointValidation(moves[0]);
+
+            foreach (Ellipse elp in player.pieces)
+            {
+                if (game.currentPlayer == "Red" && !elp.Fill.Equals(Brushes.Red)) elp.Fill = Brushes.Red;
+                if (game.currentPlayer == "Yellow" && !elp.Fill.Equals(Brushes.Yellow)) elp.Fill = Brushes.Yellow;
+            }
+
+            foreach (Ellipse elp in player.pieces)
+            {
+                if (game.currentPlayer == "Red" && !elp.Fill.Equals(Brushes.Red)) elp.Fill = Brushes.Red;
+                if (game.currentPlayer == "Yellow" && !elp.Fill.Equals(Brushes.Yellow)) elp.Fill = Brushes.Yellow;
+
+                if (Canvas.GetLeft(elp) + (elp.ActualWidth / 2) == moves[0].X && Canvas.GetTop(elp) + (elp.ActualHeight / 2) == moves[0].Y)
+                {
+                    elp.Fill = game.currentPlayer=="Yellow"?Brushes.YellowGreen: Brushes.IndianRed;
+                    break;
+                }
             }
             pg.playerTurn.Content = "Click the \nMOVE TO point";
             pg.player_err_msg.Visibility = Visibility.Hidden;
@@ -164,12 +184,12 @@ namespace Morabaraba_2
 
             if (game.Player1.stage != "Placing" && moves[1].X==0 && game.currentPlayer=="Red")
             {
-                second_Move_request(game.player1GUI, moves);
+                second_Move_request(game.player1GUI, moves, game.Player1);
                 return;
             }
             else if (game.Player2.stage != "Placing" && moves[1].X == 0 && game.currentPlayer == "Yellow")
             {
-                second_Move_request(game.player2GUI, moves);
+                second_Move_request(game.player2GUI, moves, game.Player2);
                 return;
             }
             
