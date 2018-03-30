@@ -59,6 +59,19 @@ namespace Morabaraba_2
             return Convert.ToInt32((brd.ActualHeight / divider));
         }
 
+        public Point pointValidation(Point p)
+        {
+            foreach (Point point in validPos)
+            {
+                if (Math.Abs(p.X - point.X) <= 70 && Math.Abs(p.Y - point.Y) <= 70)
+                {
+                    p = point;
+                    break;
+                }
+            }
+            return p;
+        }
+
         private List<Point> validPositions()
         {
             List<Point> result = new List<Point>();
@@ -233,7 +246,7 @@ namespace Morabaraba_2
             List<Point> d6_neighbours = new List<Point> { d5, b6, f6,d7 };
             List<Point> d7_neighbours = new List<Point> { d6, a7, g7 };
             List<Point> e3_neighbours = new List<Point> { d3, f2, e4 };
-            List<Point> e4_neighbours = new List<Point> { e3, f6, e5 };
+            List<Point> e4_neighbours = new List<Point> { e3, f4, e5 };
             List<Point> e5_neighbours = new List<Point> { e4, f6, d5 };
             List<Point> f2_neighbours = new List<Point> { d2, g1, e3, f4 };
             List<Point> f4_neighbours = new List<Point> { f2, e4, g4,f6 };
@@ -382,15 +395,8 @@ namespace Morabaraba_2
                 return;
             }
 
-            foreach (Point point in validPos)
-            {
-                if (Math.Abs(p.X - point.X) <= 70 && Math.Abs(p.Y - point.Y) <= 70)
-                {
-                    p = point;
-                    break;
-                }
-            }
-            
+            p = pointValidation(p);
+
             if (!invalidKill(p))
             {
                 Ellipse victim = candidate(p);
@@ -619,19 +625,12 @@ namespace Morabaraba_2
             pgLoser.player_err_msg.Content = "Game is a draw, game Over!";
             draw = true;
         }
+
         public void gamePlay(Point p1, Point p2)
         {
-            foreach (Point point in validPos)
-            {
-                if (Math.Abs(p1.X - point.X) <= magicNumber && Math.Abs(p1.Y - point.Y) <= magicNumber)
-                {
-                    p1 = point;
-                }
-                if (Math.Abs(p2.X - point.X) <= magicNumber && Math.Abs(p2.Y - point.Y) <= magicNumber)
-                {
-                    p2 = point;
-                }
-            }
+            p1 = pointValidation(p1);
+            p2 = pointValidation(p2);
+            
             if (invalidMove(p1,p2))
             {
                 return;
