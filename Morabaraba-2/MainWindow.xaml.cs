@@ -13,6 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+/// <summary>
+///  Morabarabara Game
+/// </summary>
 namespace Morabaraba_2
 {
     /// <summary>
