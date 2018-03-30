@@ -16,6 +16,7 @@
         <Button x:Name="Start_game" Content="Start Game" Canvas.Left="-47" Canvas.Top="376" Width="348"  Height="87" Click="Start_game_Click"/>
         <Button x:Name="Quit_game" Content="" Canvas.Left="-47" Canvas.Top="516" Width="348"  Height="87" Click="Quit_game_Click" />
         <Button x:Name="Instructions" Content="" Canvas.Left="687" Canvas.Top="516" Width="348"  Height="87" Click="Instructions_Click"  />
+        <Button x:Name="Game_Over" Content="Quit to main screen" Canvas.Left="-47" Canvas.Top="376" Width="317"  Height="68" Click="Game_Over_Click" Background="#FF7AD81B" FontSize="22" FontFamily="Stencil" Foreground="#FF7A27A0" BorderBrush="#FFFD0303" Visibility="Hidden" />
 
     </Canvas>
 

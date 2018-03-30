@@ -20,11 +20,10 @@ namespace Morabaraba_2
     /// </summary>
     public partial class MainWindow : Window
     {
-        Constraints game;
-        Point[] moves;
-        bool game_start;
-        bool game_over;
-        Ellipse currentPiece;
+        Constraints game;                           // Object to run the whole game
+        Point[] moves;                              // an array which records either record 1 move i.e a place in the board [place at;0] or two input moves [move/fly from; move/fly to] 
+        bool game_start;                            // Has the game started?
+        bool game_over;                             // Is the game Over?
         public MainWindow()
         {
             InitializeComponent();
@@ -34,9 +33,12 @@ namespace Morabaraba_2
                 this.WindowState = System.Windows.WindowState.Maximized;
             }
             game_start = false;
-            KeyDown += Windows_KeyDown;
+            KeyDown += Windows_KeyDown;             // Keyboard Handler
         }
         
+        /// <summary>
+        /// A function to run which creates all objects necessary to run and play the game
+        /// </summary>
         private void gameStart()
         {
             game = new Constraints(background);
@@ -47,11 +49,18 @@ namespace Morabaraba_2
             Start_game.Visibility = Visibility.Hidden;
             Quit_game.Visibility = Visibility.Hidden;
             Instructions.Visibility = Visibility.Hidden;
-            
+            Game_Over.Visibility = Visibility.Visible;
+
             Morabaraba.Background = Brushes.Navy;
             background.Opacity = 100;
+            
         }
 
+        /// <summary>
+        /// A function to stop and update the game GUI display when the game is over!
+        /// </summary>
+        /// <param name="pgWinner">Winning player's GUI</param>
+        /// <param name="pgLoser">Losing player's GUI</param>
         private void gameOver(GUI pgWinner, GUI pgLoser)
         {
             pgWinner.playerTurn.Visibility = Visibility.Visible;
@@ -62,11 +71,37 @@ namespace Morabaraba_2
             pgWinner.playerTurn.Content = "WINNER";
             pgWinner.player_err_msg.Content = "CONGRADULATION\n  you have won the game";
             pgLoser.playerTurn.Content = "LOSER";
-            pgLoser.player_err_msg.Content = "You have lost the game\n  try harder next time!";
+            pgLoser.player_err_msg.Content = "You have lost the game\n  try harder next time!\n\n Click on back to main screen\n a new game";
 
             game_over = true;
         }
 
+        /// <summary>
+        /// A reset function whcich destroys everything in the screen in order to start a new one, should a player choose to, takes back to welcome screen
+        /// </summary>
+        private void gameResetGUI()
+        {
+            background.Children.Clear();
+
+            Start_game.Visibility = Visibility.Visible;
+            Quit_game.Visibility = Visibility.Visible;
+            Instructions.Visibility = Visibility.Visible;
+            Game_Over.Visibility = Visibility.Hidden;
+
+            background.Children.Add(Start_game);
+            background.Children.Add(Quit_game);
+            background.Children.Add(Instructions);
+            background.Children.Add(Game_Over);
+            background.Opacity = 0;
+
+            game_start = false;
+
+            Morabaraba.Background = new ImageBrush(new BitmapImage(new Uri(@"../../screen-0.jpg", UriKind.RelativeOrAbsolute)));
+        }
+
+        /// <summary>
+        /// Quit game to exit the application
+        /// </summary>
         private void quitGame()
         {
             if (MessageBox.Show("Are you sure you want to quit?", "Quit game", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
@@ -75,6 +110,9 @@ namespace Morabaraba_2
             }
         }
 
+        /// <summary>
+        /// For instrunction button, this will open a pdf file in adobe reader application, the file contain information from usability to game rules
+        /// </summary>
         private void InstrucuntionManual()
         {
             try
@@ -92,21 +130,39 @@ namespace Morabaraba_2
             }
         }
 
+        // Start button event handler
         private void Start_game_Click(object sender, RoutedEventArgs e)
         {
             gameStart();
         }
 
+        // QUIT button event handler
         private void Quit_game_Click(object sender, RoutedEventArgs e)
         {
             quitGame();
         }
 
+        // Instructions button event handler
         private void Instructions_Click(object sender, RoutedEventArgs e)
         {
             InstrucuntionManual();
         }
 
+        // RESET button event handler
+        private void Game_Over_Click(object sender, RoutedEventArgs e)
+        {
+            if (!game_over)
+            {
+                if (MessageBox.Show("Game is not over, are you sure you want to go back to main screen?", "Quit game", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    gameResetGUI();
+                }
+                else return;
+            }
+            gameResetGUI();
+        }
+
+        // Keyboard event handler
         private void Windows_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
@@ -128,6 +184,12 @@ namespace Morabaraba_2
             }
         }
 
+        /// <summary>
+        /// In case of moving and flying stage, the user must enter two Points in the Canvas, this function accounts for that and do all the necessary GUI updates
+        /// </summary>
+        /// <param name="pg"> playerGUI</param>
+        /// <param name="moves"> [move from; move to]</param>
+        /// <param name="player"> Current player</param>
         private void second_Move_request(GUI pg, Point[] moves, Player player)
         {
             if (!game.player_own_Point(moves[0]))
@@ -156,11 +218,17 @@ namespace Morabaraba_2
                     break;
                 }
             }
-            pg.playerTurn.Content = "Click the \nMOVE TO point";
+            string action = player.stage == "Moving" ? "'MOVE'" : "'FLY'";
+            pg.playerTurn.Content = $"Click the \n{action} TO point";
             pg.player_err_msg.Visibility = Visibility.Hidden;
 
         }
 
+        /// <summary>
+        /// Mouse left click, it is used to play the game, to select where a player whould like to place a cow, and which cow a player would like to move and where to
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Background_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!game_start)
@@ -201,6 +269,11 @@ namespace Morabaraba_2
             game.player2GUI.GUI_update();
         }
 
+        /// <summary>
+        /// Mouse Right Click, it is used to Eliminate a cow/ kill enemy cow if the is a mill, it is THE GUN
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Background_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             if(!game_start)
@@ -215,20 +288,21 @@ namespace Morabaraba_2
             {
                 game.Eliminate(p);
 
-                if(game.Player1.lives==2)
+                if (game.Player1.lives == 2)
                 {
                     gameOver(game.player2GUI, game.player1GUI);
                 }
-                if(game.Player2.lives==2)
+                if (game.Player2.lives == 2)
                 {
                     gameOver(game.player1GUI, game.player2GUI);
                 }
             }
+            else
+            {
+                game.messageDisplay("There is no mill formed\n you cannot kill at this time");
+            }
             game.isMill();
-        }
+        }  
 
-        
-
-        
     }
 }

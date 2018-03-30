@@ -10,16 +10,23 @@ using System.Windows.Shapes;
 
 namespace Morabaraba_2
 {
+    /// <summary>
+    /// GUI classes to initialise some of the GUI display and also updating as the game goes along
+    /// </summary>
     class GUI
     {
         Player player;
         Ellipse[] pieces;
         Canvas brd;
-        public Label playerTurn;
-        public Label player_err_msg;
-        private Label player_Lives;
-        private Label player_Kills;
+        public Label playerTurn;                    // Who is playing
+        public Label player_err_msg;                // What's the error message
+        private Label player_Lives;                 // How many cows left
+        private Label player_Kills;                 // How many kills yet
 
+        /// <summary>
+        /// Creates a GUI for each player
+        /// </summary>
+        /// <param name="player"> Which player</param>
         public GUI(Player player)
         {
             this.player = player;
@@ -36,16 +43,29 @@ namespace Morabaraba_2
             GUI_update();
         }
 
+        /// <summary>
+        /// Given a divider, return a X-coordinate in the Canvas
+        /// </summary>
+        /// <param name="divider"> Magic Number</param>
+        /// <returns></returns>
         private double getLeft(double divider)
         {
             return brd.ActualWidth / divider;
         }
 
+        /// <summary>
+        /// Given a divider, return a Y-coordinate in the Canvas
+        /// </summary>
+        /// <param name="divider"> Magic Number</param>
+        /// <returns></returns>
         private double getTop(double divider)
         {
             return brd.ActualHeight / divider;
         }
 
+        /// <summary>
+        /// Get coordinates of where to initially place red pieces and place them 
+        /// </summary>
         private void allign_Red_Pieces()
         {
             Canvas.SetLeft(pieces[0], -getLeft(24.7));
@@ -74,6 +94,9 @@ namespace Morabaraba_2
             Canvas.SetTop(pieces[11], getTop(1.2));
         }
 
+        /// <summary>
+        /// Get coordinates of where to initially place yellow pieces and place them 
+        /// </summary>
         private void allign_Yellow_Pieces()
         {
             Canvas.SetLeft(pieces[0], getLeft(1.13));
@@ -102,6 +125,9 @@ namespace Morabaraba_2
             Canvas.SetTop(pieces[11], getTop(1.2));
         }
 
+        /// <summary>
+        /// Given the current player, decide which of the 2 above function to run, as well as additional GUI elements
+        /// </summary>
         private void GUI_pieces_allign()
         {
             Border boarder = new Border();
@@ -141,6 +167,9 @@ namespace Morabaraba_2
 
         }
 
+        /// <summary>
+        /// Allign labels accordingly
+        /// </summary>
         private void GUI_labels_allign()
         {
             player_Lives.Width = getLeft(7);
@@ -176,7 +205,10 @@ namespace Morabaraba_2
                 Canvas.SetLeft(player_Kills, getLeft(1.12));
             }
         }
-        
+
+        /// <summary>
+        /// Allign labels accordingly
+        /// </summary>
         private Label playerTurn_label()
         {
             Label player_Turn = new Label();
@@ -191,23 +223,24 @@ namespace Morabaraba_2
             if (player.symbol == "Red")
             {
                 player_Turn.Foreground = Brushes.Red;
-                //player_Turn.Content = (player.stage=="Placing"?"Player 1 make a move": "Player 1 click\n a move from position");
                 Canvas.SetLeft(player_Turn, -getLeft(17));
             }
             else
             {
                 player_Turn.Foreground = Brushes.Yellow;
-                //player_Turn.Content = (player.stage == "Placing" ? "Player 2 make a move" : "Player 2 click\n a move from position");
                 Canvas.SetLeft(player_Turn, getLeft(1.23));
             }
             return player_Turn;
         }
 
+        /// <summary>
+        /// Allign labels accordingly
+        /// </summary>
         private Label player_Error_Message()
         {
             Label player_errMsg = new Label();
             player_errMsg.Width = getLeft(4);
-            player_errMsg.Height = getTop(10);
+            player_errMsg.Height = getTop(8);
             player_errMsg.FontSize = getTop(45);
             player_errMsg.FontFamily = new FontFamily("OCR A Extended");
 
@@ -228,11 +261,16 @@ namespace Morabaraba_2
             return player_errMsg;
         }
 
+        /// <summary>
+        /// Update the GUI elements as the game proceeds, the only public method in this class
+        /// </summary>
         public void GUI_update()
         {
             player_Lives.Content = "Cows remaining  : " + player.lives;
             player_Kills.Content = "Cows eliminated : " + player.kills;
-            playerTurn.Content = (player.stage == "Placing" ? "Place a piece\non the board" : "click\n a move from position");
+
+            string action = player.stage == "Moving" ? "'MOVE'" : "'FLY'";
+            playerTurn.Content = (player.stage == "Placing" ? "Place a piece\non the board" : $"click\n a {action} from position");
         }
 
     }

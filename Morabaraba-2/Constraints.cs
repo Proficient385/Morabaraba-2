@@ -12,6 +12,9 @@ using System.Diagnostics;
 
 namespace Morabaraba_2
 {
+    /// <summary>
+    /// Constraints class runs the whole game, doing all sorts of rules checking and validations, making sure no invalid move/actions slips by
+    /// </summary>
     class Constraints
     {
         public Player Player1;
@@ -19,16 +22,16 @@ namespace Morabaraba_2
         public GUI player1GUI;
         public GUI player2GUI;
 
-        private List<Point> validPos;
-        public string currentPlayer;
-        private Canvas brd;
+        private List<Point> validPos;               // List of all valid position in the borad
+        public string currentPlayer;                // who is currently playing
+        private Canvas brd;             
 
-        private List<List<Point>> possibleMills;
-        private List<List<Point>> neighbourPos;
+        private List<List<Point>> possibleMills;    //List of possible mill formations that exist in the game
+        private List<List<Point>> neighbourPos;     //List of each position's neighbours, each index represent a location and within that index is a list of all his neighbours
 
-        public bool mill;
-        public bool draw;
-        private int magicNumber;
+        public bool mill;                           // Mill formed?
+        public bool draw;                           // Draw game?
+        private int magicNumber;                    // A number to use to estimate a valid point, which is a cow's actual width
         public Constraints(Canvas brd)
         {
             this.brd = brd;
@@ -49,21 +52,36 @@ namespace Morabaraba_2
             player2GUI.playerTurn.Visibility = Visibility.Hidden;
         }
 
+        /// <summary>
+        /// Given a divider, return a X-coordinate in the Canvas
+        /// </summary>
+        /// <param name="divider"> Magic Number</param>
+        /// <returns></returns>
         private int xCordinate (double divider)
         {
             return Convert.ToInt32((brd.ActualWidth / divider));
         }
 
+        /// <summary>
+        /// Given a divider, return a Y-coordinate in the Canvas
+        /// </summary>
+        /// <param name="divider"> Magic Number</param>
+        /// <returns></returns>
         private int yCordinate(double divider)
         {
             return Convert.ToInt32((brd.ActualHeight / divider));
         }
 
+        /// <summary>
+        /// Given a point in a canvas, if it's distance from 'A valid POINT' is within the length of a pieces' width, validate the point, to avoid multiple misses
+        /// </summary>
+        /// <param name="p"> Input point from Canvas</param>
+        /// <returns></returns>
         public Point pointValidation(Point p)
         {
             foreach (Point point in validPos)
             {
-                if (Math.Abs(p.X - point.X) <= 70 && Math.Abs(p.Y - point.Y) <= 70)
+                if (Math.Abs(p.X - point.X) <= magicNumber && Math.Abs(p.Y - point.Y) <= magicNumber)
                 {
                     p = point;
                     break;
@@ -72,6 +90,7 @@ namespace Morabaraba_2
             return p;
         }
 
+        //Create valid Positions, manually
         private List<Point> validPositions()
         {
             List<Point> result = new List<Point>();
@@ -109,6 +128,7 @@ namespace Morabaraba_2
             return result;
         }
 
+        //Create valid mill formations, manually
         private List<List<Point>> mill_Possibilities()
         {
             List<List<Point>> result = new List<List<Point>>();
@@ -195,6 +215,7 @@ namespace Morabaraba_2
             return result;
         }
 
+        //Create valid neighbours, manually
         private List<List<Point>> neighbours()
         {
             List<List<Point>> result = new List<List<Point>>();
@@ -265,7 +286,280 @@ namespace Morabaraba_2
 
             return result;
         }
+        
+        /// <summary>
+        /// Given a player's mill list and a 'Moving' from point, check if it was in a mill in order to remove the mill from mill list, so that next time i srecognized as a new one
+        /// </summary>
+        /// <param name="mill_List"> Player's mill list</param>
+        /// <param name="p"> A move from point</param>
+        private void brokenMill(List<List<Point>> mill_List, Point p)
+        {
+            for (int i = 0; i < mill_List.Count; i++)
+            {
+                if (mill_List[i].Contains(p))
+                {
+                    mill_List.Remove(mill_List[i]);
+                    return;
+                }
+            }
+        }
 
+        /// <summary>
+        /// Given a mill list and a Point, check if that point is in a mill
+        /// </summary>
+        /// <param name="mill_List"> Player's mill list</param>
+        /// <param name="p"> Given point</param>
+        /// <returns></returns>
+        private bool cowIn_MillPos(List<List<Point>> mill_List, Point p)
+        {
+            for(int i=0;i<mill_List.Count;i++)
+            {
+                if (mill_List[i].Contains(p)) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Run visual presentations to indicate who is playing or what's the error
+        /// </summary>
+        private void run_playerTurnGUI()
+        {
+            if (!mill)
+            {
+                player1GUI.player_err_msg.Visibility = Visibility.Hidden;
+                player2GUI.player_err_msg.Visibility = Visibility.Hidden;
+
+                currentPlayer = swapPlayer(currentPlayer);
+                if (currentPlayer == "Yellow")
+                {
+                    player2GUI.playerTurn.Visibility = Visibility.Visible;
+                    player1GUI.playerTurn.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    player1GUI.playerTurn.Visibility = Visibility.Visible;
+                    player2GUI.playerTurn.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Locate the piece/cow which matches the coordinates of the given point
+        /// </summary>
+        /// <param name="p"> A given point</param>
+        /// <returns> An ellipse</returns>
+        private Ellipse candidate(Point p)
+        {
+            foreach (object ob in brd.Children)
+            {
+                if (ob is Ellipse)
+                {
+                    Ellipse x = (Ellipse)ob;
+                    if (Canvas.GetLeft(x) + (x.ActualWidth / 2) == p.X && Canvas.GetTop(x) + (x.ActualHeight / 2) == p.Y)
+                    {
+                        return x;
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Given a point, locate it and remove it from the board, using all sorts of methods from validation and location
+        /// </summary>
+        /// <param name="p"> Given point</param>
+        public void Eliminate(Point p)
+        {
+            if (invalidKill_specialCase())
+            {
+                mill = false;
+                currentPlayer = swapPlayer(currentPlayer);
+                return;
+            }
+
+            p = pointValidation(p);
+
+            if (!invalidKill(p))
+            {
+                Ellipse victim = candidate(p);
+                brd.Children.Remove(victim);
+                mill = false;
+                if (currentPlayer == "Red") Player1.eliminateOpponent(Player2, p);
+                else Player2.eliminateOpponent(Player1, p);
+
+                Player1.stageUpdate();
+                Player2.stageUpdate();
+
+                player2GUI.GUI_update();
+                player1GUI.GUI_update();
+                run_playerTurnGUI();
+            }
+
+        }
+
+        /// <summary>
+        /// Given a point to kill enemy cow, check if it is a valid point, is it an enemy cow which is not in a mill, and it's not your own cow
+        /// </summary>
+        /// <param name="p"> Given point to eliminate the cow</param>
+        /// <returns></returns>
+        private bool invalidKill(Point p)
+        {
+            Ellipse victim = candidate(p);
+            if (victim == null)
+            {
+                messageDisplay("Invalid point, try again");
+                return true;
+            }
+            else
+            {
+                if (currentPlayer == "Red" && victim.Fill.Equals(Brushes.Yellow))
+                {
+                    if (cowIn_MillPos(Player2.mill_List, p) && Player2.lives != 3)
+                    {
+                        messageDisplay("Cannot kill a cow already\n in a mill, try\n another cow");
+                        return true;
+                    }
+                    return false;
+
+                }
+                else if (currentPlayer == "Yellow" && victim.Fill.Equals(Brushes.Red))
+                {
+                    if (cowIn_MillPos(Player1.mill_List, p) && Player1.lives != 3)
+                    {
+                        messageDisplay("Cannot kill a cow already\n in a mill, try\n another cow");
+                        return true;
+                    }
+                    return false;
+                }
+                else
+                {
+                    messageDisplay("Don't kill yourself, Try again");
+                    return true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Check if all enemy cows are in mill formation, if so, a kill is wasted and a player loses a turn
+        /// </summary>
+        /// <param name="player"> Opponent to killed </param>
+        /// <param name="pg1"> player1GUI</param>
+        /// <param name="pg2"> player2GUI</param>
+        /// <param name="whichCow"> string for display purpose</param>
+        /// <returns></returns>
+        private bool invalid_kill_special(Player player, GUI pg1, GUI pg2, string whichCow)
+        {
+            foreach (Point playedPos in player.playedPos)
+            {
+                bool pointInMill = false;
+                for (int i = 0; i < player.mill_List.Count; i++)
+                {
+                    if (player.mill_List[i].Contains(playedPos)) pointInMill = true;
+                }
+                if (!pointInMill || player.lives == 3) return false;
+            }
+            messageDisplay($"Bad timing to eliminate, all\n{whichCow} COWS IN MILL!\n   MILL WASTED!!");
+            pg1.playerTurn.Visibility = Visibility.Hidden;
+            pg2.playerTurn.Visibility = Visibility.Visible;
+            return true;
+        }
+
+        /// <summary>
+        /// Check invalid kill special using the above method
+        /// </summary>
+        /// <returns></returns>
+        private bool invalidKill_specialCase()
+        {
+            if (currentPlayer == "Red")
+            {
+                return invalid_kill_special(Player2, player1GUI, player2GUI, "YELLOW");
+            }
+            else
+            {
+                return invalid_kill_special(Player1, player2GUI, player1GUI, "RED");
+            }
+
+        }
+
+
+        /// <summary>
+        /// GUI update display error or informative messages
+        /// </summary>
+        /// <param name="err_message"></param>
+        public void messageDisplay(string err_message)
+        {
+            if (currentPlayer == "Red")
+            {
+                player1GUI.player_err_msg.Visibility = Visibility.Visible;
+                player1GUI.player_err_msg.Content = err_message;
+            }
+            else
+            {
+                player2GUI.player_err_msg.Visibility = Visibility.Visible;
+                player2GUI.player_err_msg.Content = err_message;
+            }
+
+        }
+
+        /// <summary>
+        /// Always run to check for a mill formation and update/broadcast accordingly i.e a field 'mill' will be set true should a mill be found
+        /// </summary>
+        public void isMill()
+        {
+            if(currentPlayer=="Red")
+            {
+                for (int i = 0; i < possibleMills.Count; i++)
+                {
+                    int count = 0;
+                    for (int k = 0; k < Player1.playedPos.Count; k++)
+                    {
+                        if (possibleMills[i].Contains(Player1.playedPos[k])) count++;
+                    }
+
+                    if(count==3 && !Player1.mill_List.Contains(possibleMills[i]))
+                    {
+                        Player1.mill_List.Add(possibleMills[i]);
+                        messageDisplay("RED HAS MILL, Choose a cow\n to eliminate");
+                        mill = true;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < possibleMills.Count; i++)
+                {
+                    int count = 0;
+                    for (int k = 0; k < Player2.playedPos.Count; k++)
+                    {
+                        if (possibleMills[i].Contains(Player2.playedPos[k])) count++;
+                    }
+
+                    if (count == 3 && !Player2.mill_List.Contains(possibleMills[i]))
+                    {
+                        Player2.mill_List.Add(possibleMills[i]);
+                        messageDisplay("Yellow HAS MILL, Choose a cow\n to eliminate");
+                        mill = true;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Given a point, validate it and check who owns the point, this is to avoid a player trying to move another player's piece 
+        /// </summary>
+        /// <param name="p1"> Given point</param>
+        /// <returns> The ower of the point</returns>
+        public bool player_own_Point(Point p1)
+        {
+            p1 = pointValidation(p1);
+            return (currentPlayer=="Red"?Player1.playedPos.Contains(p1): Player2.playedPos.Contains(p1));
+        }
+
+        /// <summary>
+        /// Given a point, return an index to be used in the neighbours list, since within that index is a point's list of neighbours
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
         private int getIndex(Point p)
         {
             Point a1 = new Point(xCordinate(4.03), yCordinate(9.05));
@@ -328,159 +622,12 @@ namespace Morabaraba_2
             return -1;
         }
 
-        private Ellipse candidate(Point p)
-        {
-            foreach(object ob in brd.Children)
-            {
-                if(ob is Ellipse)
-                {
-                    Ellipse x = (Ellipse)ob;
-                    if (Canvas.GetLeft(x) + (x.ActualWidth/2) == p.X && Canvas.GetTop(x) + (x.ActualHeight/2) == p.Y)
-                    {
-                        return x;
-                    }
-                }
-            }
-            return null;
-        }
-        
-        private void brokenMill(List<List<Point>> mill_List, Point p)
-        {
-            for (int i = 0; i < mill_List.Count; i++)
-            {
-                if (mill_List[i].Contains(p))
-                {
-                    mill_List.Remove(mill_List[i]);
-                    return;
-                }
-            }
-        }
-
-        private bool cowIn_MillPos(List<List<Point>> mill_List, Point p)
-        {
-            for(int i=0;i<mill_List.Count;i++)
-            {
-                if (mill_List[i].Contains(p)) return true;
-            }
-            return false;
-        }
-
-        private void run_playerTurnGUI()
-        {
-            if (!mill)
-            {
-                player1GUI.player_err_msg.Visibility = Visibility.Hidden;
-                player2GUI.player_err_msg.Visibility = Visibility.Hidden;
-
-                currentPlayer = swapPlayer(currentPlayer);
-                if (currentPlayer == "Yellow")
-                {
-                    player2GUI.playerTurn.Visibility = Visibility.Visible;
-                    player1GUI.playerTurn.Visibility = Visibility.Hidden;
-                }
-                else
-                {
-                    player1GUI.playerTurn.Visibility = Visibility.Visible;
-                    player2GUI.playerTurn.Visibility = Visibility.Hidden;
-                }
-            }
-        }
-        
-        public void Eliminate(Point p)
-        {
-            if (invalidKill_specialCase())
-            {
-                mill = false;
-                currentPlayer = swapPlayer(currentPlayer);
-                return;
-            }
-
-            p = pointValidation(p);
-
-            if (!invalidKill(p))
-            {
-                Ellipse victim = candidate(p);
-                brd.Children.Remove(victim);
-                mill = false;
-                if (currentPlayer == "Red") Player1.eliminateOpponent(Player2, p);
-                else Player2.eliminateOpponent(Player1, p);
-
-                player1GUI.GUI_update();
-                Player1.stageUpdate();
-                player2GUI.GUI_update();
-                Player2.stageUpdate();
-                run_playerTurnGUI();
-            }
-
-        }
-
-        public void messageDisplay(string err_message)
-        {
-            if (currentPlayer == "Red")
-            {
-                player1GUI.player_err_msg.Visibility = Visibility.Visible;
-                player1GUI.player_err_msg.Content = err_message;
-            }
-            else
-            {
-                player2GUI.player_err_msg.Visibility = Visibility.Visible;
-                player2GUI.player_err_msg.Content = err_message;
-            }
-
-        }
-
-        public void isMill()
-        {
-            if(currentPlayer=="Red")
-            {
-                for (int i = 0; i < possibleMills.Count; i++)
-                {
-                    int count = 0;
-                    for (int k = 0; k < Player1.playedPos.Count; k++)
-                    {
-                        if (possibleMills[i].Contains(Player1.playedPos[k])) count++;
-                    }
-
-                    if(count==3 && !Player1.mill_List.Contains(possibleMills[i]))
-                    {
-                        Player1.mill_List.Add(possibleMills[i]);
-                        messageDisplay("RED HAS MILL, Choose a cow\n to eliminate");
-                        mill = true;
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < possibleMills.Count; i++)
-                {
-                    int count = 0;
-                    for (int k = 0; k < Player2.playedPos.Count; k++)
-                    {
-                        if (possibleMills[i].Contains(Player2.playedPos[k])) count++;
-                    }
-
-                    if (count == 3 && !Player2.mill_List.Contains(possibleMills[i]))
-                    {
-                        Player2.mill_List.Add(possibleMills[i]);
-                        messageDisplay("Yellow HAS MILL, Choose a cow\n to eliminate");
-                        mill = true;
-                    }
-                }
-            }
-        }
-
-        public bool player_own_Point(Point p1)
-        {
-            foreach (Point point in validPos)
-            {
-                if (Math.Abs(p1.X - point.X) <= magicNumber && Math.Abs(p1.Y - point.Y) <= magicNumber)
-                {
-                    p1 = point;
-                }
-            }
-            return (currentPlayer=="Red"?Player1.playedPos.Contains(p1): Player2.playedPos.Contains(p1));
-        }
-
+        /// <summary>
+        /// check if the a point to MOVE TO is a black space and is a neighbour by checking MOVE FROM 's neighbours for moving stage, otherwise disregard the neighbour part for flying
+        /// </summary>
+        /// <param name="p1"> MOVE FROM</param>
+        /// <param name="p2">MOVE TO</param>
+        /// <returns></returns>
         private bool invalidMove0(Point p1, Point p2)
         {
             if (!validPos.Contains(p2))
@@ -507,6 +654,12 @@ namespace Morabaraba_2
             return false;
         }
 
+        /// <summary>
+        /// Checking for invalid moves for all 3 stages/states i.e Placing, Moving and Flying
+        /// </summary>
+        /// <param name="p"> MOVE FROM</param>
+        /// <param name="p2"> MOVE TO</param>
+        /// <returns></returns>
         private bool invalidMove(Point p, Point p2)
         {
             if (!validPos.Contains(p))
@@ -530,78 +683,20 @@ namespace Morabaraba_2
             return false;
         }
 
-        private bool invalidKill(Point p)
-        {
-            Ellipse victim = candidate(p);
-            if (victim == null)
-            {
-                messageDisplay("Invalid point, try again");
-                return true;
-            }
-            else
-            {
-                if (currentPlayer == "Red" && victim.Fill.Equals(Brushes.Yellow))
-                {
-                    if (cowIn_MillPos(Player2.mill_List, p))
-                    {
-                        messageDisplay("Cannot kill a cow already in a mill,\n try another cow");
-                        return true;
-                    }
-                    return false;
-                    
-                }
-                else if(currentPlayer == "Yellow" && victim.Fill.Equals(Brushes.Red))
-                {
-                    if (cowIn_MillPos(Player1.mill_List, p))
-                    {
-                        messageDisplay("Cannot kill a cow already in a mill,\n try another cow");
-                        return true;
-                    }
-                    return false;
-                }
-                else
-                {
-                    messageDisplay("Don't kill yourself, Try again");
-                    return true;
-                }
-            }
-        }
-
-        private bool invalid_kill_special(Player player, GUI pg1, GUI pg2, string whichCow)
-        {
-            foreach (Point playedPos in player.playedPos)
-            {
-                bool pointInMill = false;
-                for (int i = 0; i < player.mill_List.Count; i++)
-                {
-                    if (player.mill_List[i].Contains(playedPos)) pointInMill = true;
-                }
-                if (!pointInMill) return false;
-            }
-            messageDisplay($"Bad timing to eliminate, all\n{whichCow} COWS IN MILL!\n   MILL WASTED!!");
-            pg1.playerTurn.Visibility = Visibility.Hidden;
-            pg2.playerTurn.Visibility = Visibility.Visible;
-            return true;
-        }
-
-        private bool invalidKill_specialCase()
-        {
-            if (currentPlayer == "Red")
-            {
-                return invalid_kill_special(Player2, player1GUI, player2GUI, "YELLOW");
-            }
-            else
-            {
-                return invalid_kill_special(Player1, player2GUI, player1GUI, "RED");
-            }
-       
-        }
-
+        /// <summary>
+        /// Swap the player
+        /// </summary>
+        /// <param name="player"> Current player</param>
+        /// <returns> The other player</returns>
         private string swapPlayer(string player)
         {
             return player == "Red" ? "Yellow" : "Red";
         }
         
+        /// <summary>
+        /// Check a game is draw i.e no blank space is available to play or move
+        /// </summary>
+        /// <returns></returns>
         private bool drawGame()
         {
             int countEmpty = 0;
@@ -612,6 +707,11 @@ namespace Morabaraba_2
             return countEmpty == 24;
         }
 
+        /// <summary>
+        /// A draw game GUI to display realted messages about the draw and how to proceed
+        /// </summary>
+        /// <param name="pgWinner"> player1GUI</param>
+        /// <param name="pgLoser">player2GUI</param>
         private void drawGame(GUI pgWinner, GUI pgLoser)
         {
             pgWinner.playerTurn.Visibility = Visibility.Visible;
@@ -620,12 +720,17 @@ namespace Morabaraba_2
             pgLoser.player_err_msg.Visibility = Visibility.Visible;
 
             pgWinner.playerTurn.Content = "DRAW";
-            pgWinner.player_err_msg.Content = "Game is a draw, game Over!";
+            pgWinner.player_err_msg.Content = "Game is a draw, game Over!\n\n click on back to main screen\n to start a new game";
             pgLoser.playerTurn.Content = "DRAW";
-            pgLoser.player_err_msg.Content = "Game is a draw, game Over!";
+            pgLoser.player_err_msg.Content = "Game is a draw, game Over!\n\n click on back to main screen\n to start a new game";
             draw = true;
         }
 
+        /// <summary>
+        /// A method that actually run the whole game using almost all of the functions before accepting the points as valid, i.e it will fail if either of point p1 or p2 is not validated
+        /// </summary>
+        /// <param name="p1"> Place to poisition or MOVE/FLY FROM position</param>
+        /// <param name="p2"> MOVE/FLY from position</param>
         public void gamePlay(Point p1, Point p2)
         {
             p1 = pointValidation(p1);
