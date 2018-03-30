@@ -5,12 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Morabaraba_2"
         mc:Ignorable="d"
-        Title="Morabaraba" Height="350" Width="525" ResizeMode="CanMinimize" Background="#FF000964" Icon="Icon.jpg">
-    <Canvas x:Name="Background" Margin="107,18,81,16"  MouseLeftButtonDown="Background_MouseLeftButtonDown" MouseRightButtonDown="Background_MouseRightButtonDown" >
+        Title="Morabaraba" Height="350" Width="525" ResizeMode="CanMinimize" Icon="Icon.jpg" >
+    <Window.Background>
+        <ImageBrush ImageSource="screen-0.jpg"/>
+    </Window.Background>
+    <Canvas x:Name="background" Margin="107,18,81,16"  MouseLeftButtonDown="Background_MouseLeftButtonDown" MouseRightButtonDown="Background_MouseRightButtonDown" Opacity="0" >
         <Canvas.Background>
             <ImageBrush ImageSource="Board2.PNG" Stretch="Uniform"/>
         </Canvas.Background>
-        <Button x:Name="start" Content="Start Game" Canvas.Left="-84" Canvas.Top="81" Width="75" Click="Button_Click" Height="27"/>
+        <Button x:Name="Start_game" Content="Start Game" Canvas.Left="-47" Canvas.Top="376" Width="348"  Height="87" Click="Start_game_Click"/>
+        <Button x:Name="Quit_game" Content="" Canvas.Left="-47" Canvas.Top="516" Width="348"  Height="87" Click="Quit_game_Click" />
+        <Button x:Name="Instructions" Content="" Canvas.Left="687" Canvas.Top="516" Width="348"  Height="87" Click="Instructions_Click"  />
+
     </Canvas>
 
 </Window>
