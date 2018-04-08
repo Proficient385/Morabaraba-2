@@ -30,7 +30,7 @@ namespace Morabaraba_2
         public GUI(Player player)
         {
             this.player = player;
-            pieces = player.pieces;
+            pieces = player.pieces2;
             brd = player.brd;
             playerTurn = playerTurn_label();
             player_err_msg = player_Error_Message();

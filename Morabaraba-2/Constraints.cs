@@ -47,7 +47,7 @@ namespace Morabaraba_2
             neighbourPos = neighbours();
             mill = false;
             draw = false;
-            magicNumber = (int)Player1.pieces[0].Width;
+            magicNumber = (int)Player1.pieces2[0].Width;
 
             player2GUI.playerTurn.Visibility = Visibility.Hidden;
         }
@@ -384,8 +384,8 @@ namespace Morabaraba_2
                 Ellipse victim = candidate(p);
                 brd.Children.Remove(victim);
                 mill = false;
-                if (currentPlayer == "Red") Player1.eliminateOpponent(Player2, p);
-                else Player2.eliminateOpponent(Player1, p);
+                if (currentPlayer == "Red") Player1.eliminateOpponent(Player2, p, victim);
+                else Player2.eliminateOpponent(Player1, p, victim);
 
                 Player1.stageUpdate();
                 Player2.stageUpdate();
@@ -551,7 +551,6 @@ namespace Morabaraba_2
         /// <returns> The ower of the point</returns>
         public bool player_own_Point(Point p1)
         {
-            p1 = pointValidation(p1);
             return (currentPlayer=="Red"?Player1.playedPos.Contains(p1): Player2.playedPos.Contains(p1));
         }
 

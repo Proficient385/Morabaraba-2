@@ -195,15 +195,17 @@ namespace Morabaraba_2
         /// <param name="player"> Current player</param>
         private void second_Move_request(GUI pg, Point[] moves, Player player)
         {
+            moves[0] = game.pointValidation(moves[0]);
             if (!game.player_own_Point(moves[0]))
             {
                 pg.player_err_msg.Content = "Please select your own\npiece to move!";
                 pg.player_err_msg.Visibility = Visibility.Visible;
                 moves[0].X = moves[0].Y = 0;
+                moves[1].X = moves[1].Y = 0;
                 return;
             }
-            moves[0] = game.pointValidation(moves[0]);
-
+           
+            // If a different one from error move, is chosen, reset the previous select ellipse
             foreach (Ellipse elp in player.pieces)
             {
                 if (game.currentPlayer == "Red" && !elp.Fill.Equals(Brushes.Red)) elp.Fill = Brushes.Red;
@@ -212,11 +214,9 @@ namespace Morabaraba_2
 
             foreach (Ellipse elp in player.pieces)
             {
-                if (game.currentPlayer == "Red" && !elp.Fill.Equals(Brushes.Red)) elp.Fill = Brushes.Red;
-                if (game.currentPlayer == "Yellow" && !elp.Fill.Equals(Brushes.Yellow)) elp.Fill = Brushes.Yellow;
-
                 if (Canvas.GetLeft(elp) + (elp.ActualWidth / 2) == moves[0].X && Canvas.GetTop(elp) + (elp.ActualHeight / 2) == moves[0].Y)
                 {
+                  //  MessageBox.Show("Executed!");
                     elp.Fill = game.currentPlayer=="Yellow"?Brushes.YellowGreen: Brushes.IndianRed;
                     break;
                 }
@@ -234,6 +234,7 @@ namespace Morabaraba_2
         /// <param name="e"></param>
         private void Background_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            
             if (!game_start)
             {
                 MessageBox.Show("To start the game, first click the 'START A NEW GAME' button");
@@ -305,7 +306,8 @@ namespace Morabaraba_2
                 game.messageDisplay("There is no mill formed\n you cannot kill at this time");
             }
             game.isMill();
-        }  
+        }
 
+        
     }
 }

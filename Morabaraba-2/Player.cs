@@ -22,7 +22,8 @@ namespace Morabaraba_2
         public string stage;                                // Current state of this playing between the 3 states that exists                                
         public List<Point> playedPos;                       // All points/positions that this player played
         public List<List<Point>> mill_List;                 // All the mills formed by this player
-        public Ellipse[] pieces;                            // Actual pieces of this player i.e visual cows
+        public Ellipse[] pieces2;                            // Actual pieces of this player i.e visual cows
+        public List<Ellipse> pieces;
         private int pIdx;                                   // index to identify cow in the array of cows above
         public Canvas brd;                                  // Canvas of the whole game where Controls/cows and any visual stuff must be place at
 
@@ -35,7 +36,8 @@ namespace Morabaraba_2
         {
             this.symbol = symbol;
             this.brd = brd;
-            pieces = createPlayerPieces();
+            pieces = new List<Ellipse>();
+            pieces2 = createPlayerPieces();
             playedPos = new List<Point>();
             mill_List = new List<List<Point>>();
             stage = "Placing";
@@ -62,6 +64,18 @@ namespace Morabaraba_2
             return result;
         }
         
+        private void piecesOnTheBoard()
+        {
+            foreach(object ob in brd.Children)
+            {
+                if(ob is Ellipse)
+                {
+                    Ellipse x = (Ellipse) ob;
+                    if (symbol == "Red" && x.Fill.Equals(Brushes.Red) && !pieces.Contains(x)) pieces.Add(x);
+                    if (symbol == "Yellow" && x.Fill.Equals(Brushes.Yellow) && !pieces.Contains(x)) pieces.Add(x);
+                }
+            }
+        }
         /// <summary>
         /// Given two points, either use only 1 point p1 to place a cow in board, or use both points p1 and p2 to move a cow in the board
         /// </summary>
@@ -71,9 +85,10 @@ namespace Morabaraba_2
         {
             if (stage == "Placing")
             {
+                piecesOnTheBoard();
                 playedPos.Add(P1);
-                Canvas.SetLeft(pieces[pIdx], (P1.X - (pieces[pIdx].ActualWidth / 2)));
-                Canvas.SetTop(pieces[pIdx], (P1.Y - (pieces[pIdx].ActualHeight / 2)));
+                Canvas.SetLeft(pieces2[pIdx], (P1.X - (pieces2[pIdx].ActualWidth / 2)));
+                Canvas.SetTop(pieces2[pIdx], (P1.Y - (pieces2[pIdx].ActualHeight / 2)));
                 pIdx++;
             }
             else
@@ -92,7 +107,7 @@ namespace Morabaraba_2
         {
             foreach (Ellipse piece in pieces)
             {
-                if((Canvas.GetLeft(piece)+ piece.ActualWidth / 2) == pt_from.X && (Canvas.GetTop(piece)+ piece.ActualWidth / 2) == pt_from.Y)
+                if((Canvas.GetLeft(piece)+ piece.ActualWidth / 2) == pt_from.X && (Canvas.GetTop(piece)+ piece.ActualHeight / 2) == pt_from.Y)
                 {
                     Canvas.SetLeft(piece, (pt_to.X- (piece.ActualWidth / 2)));
                     Canvas.SetTop(piece, (pt_to.Y - (piece.ActualHeight / 2)));
@@ -110,11 +125,12 @@ namespace Morabaraba_2
 
         public void movePiece(Point pt_from, Point pt_to)
         {
+            if (!playedPos.Contains(pt_from)) MessageBox.Show("You crazy!");
             foreach(Point point in playedPos)
             {
                 if(point.Equals(pt_from))
                 {
-                    playedPos.Remove(point);
+                    playedPos.Remove(pt_from);
                     playedPos.Add(pt_to);
                     locatePiece_and_move(pt_from, pt_to);
                     break;
@@ -137,11 +153,12 @@ namespace Morabaraba_2
         /// </summary>
         /// <param name="X"> which Player to be eliminated</param>
         /// <param name="p"> which cow to be killed</param>
-        public void eliminateOpponent(Player X,Point p)
+        public void eliminateOpponent(Player X,Point p, Ellipse victim)
         {
             X.lives--;
             kills++;
             X.playedPos.Remove(p);
+            X.pieces.Remove(victim);
         }
         
     }
