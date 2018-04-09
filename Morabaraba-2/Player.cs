@@ -23,7 +23,7 @@ namespace Morabaraba_2
         public List<Point> playedPos;                       // All points/positions that this player played
         public List<List<Point>> mill_List;                 // All the mills formed by this player
         public Ellipse[] pieces2;                            // Actual pieces of this player i.e visual cows
-        public List<Ellipse> pieces;
+        public List<Ellipse> pieces;                        // Pieces that can be update throughout the game
         private int pIdx;                                   // index to identify cow in the array of cows above
         public Canvas brd;                                  // Canvas of the whole game where Controls/cows and any visual stuff must be place at
 
@@ -64,6 +64,7 @@ namespace Morabaraba_2
             return result;
         }
         
+        // Update the actual "pieces" List as the game player (Only in placing stage)
         private void piecesOnTheBoard()
         {
             foreach(object ob in brd.Children)
