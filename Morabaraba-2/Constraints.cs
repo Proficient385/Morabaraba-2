@@ -294,12 +294,13 @@ namespace Morabaraba_2
         /// <param name="p"> A move from point</param>
         private void brokenMill(List<List<Point>> mill_List, Point p)
         {
+            START_CHECK:
             for (int i = 0; i < mill_List.Count; i++)
             {
                 if (mill_List[i].Contains(p))
                 {
                     mill_List.Remove(mill_List[i]);
-                    return;
+                    goto START_CHECK;
                 }
             }
         }
